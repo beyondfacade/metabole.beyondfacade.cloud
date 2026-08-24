@@ -1,0 +1,46 @@
+# Site settings
+title: 메타볼 (Metabole)
+email: kcs8815@gmail.com
+description: >-
+  상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발 프로젝트.
+  서울 상권 공공데이터 기반 전통 변수 8종 × 특이변수 4계층 분석과
+  브이월드 지도 시각화·정책자금 연계를 다루는 문서 사이트.
+baseurl: ""
+url: "https://metabole.beyondfacade.cloud"
+lang: ko
+timezone: Asia/Seoul
+
+# Build settings
+theme: just-the-docs
+plugins:
+  - jekyll-feed
+
+# Just the Docs
+search_enabled: true
+search:
+  heading_level: 3
+  preview_words: 30
+enable_copy_code_button: true
+heading_anchors: true
+color_scheme: light
+
+# ERD 페이지의 mermaid 다이어그램 렌더링 (Just the Docs 내장 지원)
+mermaid:
+  version: "10.9.3"
+
+aux_links:
+  GitHub:
+    - "https://github.com/beyondfacade/metabole.beyondfacade.cloud"
+
+footer_content: "팀 BeyondFacade — Metabole 상권 데이터 구조화 및 창업 분석 프로젝트. 본 사이트는 개발 문서 자료입니다."
+
+# 개발 일지(jekyll.md)는 크론이 원본을 덮어쓰므로 nav 설정을 defaults로 주입
+defaults:
+  - scope:
+      path: "jekyll.md"
+    values:
+      nav_order: 10
+
+exclude:
+  - README.md
+  - brainstorming.md
