@@ -2,7 +2,7 @@
 layout: default
 title: 4. 개발 일정 및 추진 체계
 permalink: /docs/schedule.html
-nav_order: 7
+nav_order: 8
 has_children: true
 ---
 

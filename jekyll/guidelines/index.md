@@ -2,7 +2,7 @@
 layout: default
 title: 3. 주요 개발 수행 지침
 permalink: /docs/guidelines.html
-nav_order: 6
+nav_order: 7
 has_children: true
 ---
 

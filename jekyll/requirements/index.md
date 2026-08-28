@@ -2,7 +2,7 @@
 layout: default
 title: 2. 개발 요구 사항
 permalink: /docs/requirements.html
-nav_order: 5
+nav_order: 6
 has_children: true
 ---
 

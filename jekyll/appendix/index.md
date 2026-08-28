@@ -2,7 +2,7 @@
 layout: default
 title: 5. 부록
 permalink: /docs/appendix.html
-nav_order: 8
+nav_order: 9
 has_children: true
 ---
 
