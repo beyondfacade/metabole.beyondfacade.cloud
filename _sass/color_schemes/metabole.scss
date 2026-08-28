@@ -1,0 +1,16 @@
+// ── Metabole 커스텀 컬러 스킴 ──
+// 톤앤매너: "데이터 컨설팅 리포트" — 잉크 네이비 + 데이터 블루, 넉넉한 화이트 여백.
+// 멘토링 기업에게 신뢰감·분석 역량을 전달하는 것이 목표 (해커톤 톤 탈피).
+@import "./color_schemes/light";
+
+$body-background-color: #ffffff;
+$body-heading-color: #131c2e;   // 잉크 네이비
+$body-text-color: #3d4657;      // 본문 딥 그레이
+$link-color: #2257cf;           // 데이터 블루
+$btn-primary-color: #1d4ed8;
+$nav-child-link-color: #4a5468;
+$sidebar-color: #f7f8fb;        // 쿨 그레이 사이드바
+$base-button-color: #f6f8fb;
+$border-color: #e6e9f0;
+$feedback-color: #eef1f6;
+$search-result-preview-color: #5b6474;

@@ -1,5 +1,5 @@
 # Site settings
-title: 메타볼 (Metabole)
+title: 메타볼레 (Metabole)
 email: kcs8815@gmail.com
 description: >-
   상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발 프로젝트.
@@ -22,7 +22,7 @@ search:
   preview_words: 30
 enable_copy_code_button: true
 heading_anchors: true
-color_scheme: light
+color_scheme: metabole
 
 # ERD 페이지의 mermaid 다이어그램 렌더링 (Just the Docs 내장 지원)
 mermaid:

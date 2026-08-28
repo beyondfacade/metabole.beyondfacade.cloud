@@ -1,3 +1,289 @@
+/* ════════════════════════════════════════════════════════════
+   Metabole 디자인 시스템 — "데이터 컨설팅 리포트" 톤앤매너
+   타깃 독자: 멘토링·채용 기업 실무자. 신뢰감 / 분석 역량 / 협업 프로세스 전달.
+   팔레트: 잉크 네이비 #131c2e · 데이터 블루 #2257cf · 쿨 그레이 #f7f8fb
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 한글 문서 기본기 ── */
+body {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4,
+.site-title {
+  letter-spacing: -0.015em;
+}
+
+/* ── 사이드바 정돈 ── */
+.side-bar {
+  border-right: 1px solid #e6e9f0;
+}
+.site-title {
+  font-weight: 800 !important;
+  color: #131c2e !important;
+}
+.nav-list .nav-list-item .nav-list-link.active {
+  background: #eaf0fd;
+  color: #1d4ed8;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 #2257cf;
+}
+
+/* ── 본문 타이포그래피 ── */
+.main-content {
+  line-height: 1.8;
+
+  h1 { font-weight: 800; }
+  h2 {
+    font-weight: 750;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid #e6e9f0;
+  }
+  h3 { font-weight: 700; }
+
+  table {
+    font-size: 0.85rem;
+    th {
+      font-weight: 700;
+      background: #f7f8fb;
+      color: #131c2e;
+    }
+  }
+
+  blockquote {
+    color: #44506a;
+    background: #f4f7fd;
+    border-left: 3px solid #2257cf;
+    padding: 12px 18px;
+    margin-left: 0;
+    border-radius: 0 8px 8px 0;
+  }
+}
+
+/* ════════════════════════════════════════════
+   랜딩(포트폴리오 표지) 컴포넌트
+   ════════════════════════════════════════════ */
+
+.landing {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 0 24px;
+}
+
+/* ── 히어로 ── */
+.hero { text-align: center; }
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #2257cf;
+  background: #eaf0fd;
+  border-radius: 100px;
+  padding: 5px 14px;
+  margin-bottom: 26px;
+}
+.hero-title {
+  font-size: 2.15em;
+  font-weight: 800;
+  line-height: 1.4;
+  color: #131c2e;
+  margin: 0;
+  word-break: keep-all;
+}
+.hero-title .accent { color: #2257cf; }
+.hero-lead {
+  max-width: 620px;
+  margin: 18px auto 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #4a5468;
+}
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+.btn-cta {
+  display: inline-block;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 10px;
+  text-decoration: none !important;
+  background-image: none !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  &:hover { transform: translateY(-1px); }
+}
+.btn-cta.primary {
+  background: #1d4ed8;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.28);
+}
+.btn-cta.ghost {
+  background: #fff;
+  color: #131c2e !important;
+  border: 1px solid #dfe3ec;
+}
+
+/* ── 핵심 지표 밴드 ── */
+.stat-band {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 48px 0 0;
+}
+.stat {
+  background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+  border: 1px solid #e6e9f0;
+  border-radius: 14px;
+  padding: 20px 16px 18px;
+  text-align: center;
+}
+.stat-number {
+  font-size: 1.55em;
+  font-weight: 800;
+  color: #131c2e;
+  margin: 0;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.stat-number .unit { font-size: 0.6em; font-weight: 700; color: #2257cf; }
+.stat-label {
+  font-size: 12.5px;
+  color: #6b7386;
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+/* ── 섹션 공통 ── */
+.landing-section { margin-top: 64px; }
+.landing-section > h2 {
+  font-size: 1.25em;
+  font-weight: 750;
+  color: #131c2e;
+  text-align: center;
+  margin: 0 0 8px;
+  border: none !important;
+  padding: 0 !important;
+}
+.landing-section > .section-sub {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7386;
+  margin: 0 0 26px;
+}
+
+/* ── 역량 카드 3종 ── */
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  text-align: left;
+}
+.value-card {
+  background: #fff;
+  border: 1px solid #e6e9f0;
+  border-radius: 14px;
+  padding: 22px 20px;
+  .value-icon { font-size: 20px; margin: 0 0 10px; }
+  h3 {
+    font-size: 15px !important;
+    font-weight: 700;
+    color: #131c2e;
+    margin: 0 0 8px !important;
+  }
+  p {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #4a5468;
+    margin: 0;
+  }
+}
+
+/* ── 팀 카드 ── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+.team-card {
+  background: #fff;
+  border: 1px solid #e6e9f0;
+  border-radius: 14px;
+  padding: 22px 18px 20px;
+  text-align: center;
+  .team-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #eaf0fd;
+    color: #1d4ed8;
+    font-weight: 800;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .team-name { font-weight: 750; font-size: 15.5px; color: #131c2e; margin: 0; }
+  .team-role {
+    font-size: 12.5px;
+    color: #6b7386;
+    line-height: 1.6;
+    margin: 6px 0 0;
+  }
+}
+
+/* ── 프로젝트 정보 스트립 ── */
+.info-strip {
+  background: #f7f8fb;
+  border: 1px solid #e6e9f0;
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px 28px;
+  text-align: left;
+  /* just-the-docs의 dl 그리드·dt 콜론 스타일을 해제하고 세로 배치로 */
+  dl {
+    display: block;
+    grid-template-columns: none;
+    margin: 0;
+  }
+  dt, dd {
+    display: block;
+    text-align: left;
+    margin: 0;
+  }
+  dt::after { content: none; }
+  dt {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #6b7386;
+    margin-bottom: 4px;
+  }
+  dd {
+    font-size: 14px;
+    font-weight: 600;
+    color: #131c2e;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+}
+
+.landing-footnote {
+  text-align: center;
+  color: #9aa1b0;
+  font-size: 12.5px;
+  margin-top: 56px;
+}
+
 /* ── 개발 세션 배너 (head_custom) ── */
 .dev-session-banner {
   position: fixed;
@@ -10,7 +296,7 @@
   justify-content: center;
   gap: 8px;
   padding: 8px 16px;
-  background: #137a3d;
+  background: #131c2e;
   color: #fff;
   font-size: 14px;
   font-weight: 500;
@@ -20,7 +306,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #7dffb0;
+  background: #4ade80;
   animation: dev-session-pulse 1.5s ease-in-out infinite;
 }
 .dev-session-since {
@@ -36,44 +322,6 @@ body:has(.dev-session-banner) .main {
   padding-top: 36px;
 }
 
-/* ── 한글 문서 기본기 ── */
-body {
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif;
-  word-break: keep-all;
-}
-
-.main-content {
-  line-height: 1.75;
-
-  table {
-    font-size: 0.85rem;
-    th { font-weight: 700; }
-  }
-
-  blockquote {
-    color: #555;
-    background: #f7f9fc;
-    padding: 10px 16px;
-    margin-left: 0;
-  }
-}
-
-/* ── 표지(minimal 레이아웃) 지표 카드 ── */
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 10px;
-  margin: 40px 0 0;
-  text-align: left;
-}
-.metric-card {
-  border: 1px solid #e6e6e6;
-  border-radius: 8px;
-  padding: 14px 16px;
-  .metric-label { color: #828282; font-size: 12px; margin: 0 0 4px; }
-  .metric-value { font-weight: 700; font-size: 15px; margin: 0; line-height: 1.45; }
-}
-
 /* ── 칸반 보드 ── */
 .kanban-wrap { overflow-x: auto; margin: 24px 0; }
 .kanban-board {
@@ -83,28 +331,28 @@ body {
   min-width: 800px;
 }
 .kanban-col {
-  background: #f6f7f9;
-  border-radius: 10px;
+  background: #f7f8fb;
+  border-radius: 12px;
   padding: 10px;
   h4 {
     font-size: 13px !important;
     font-weight: 700;
-    color: #555;
+    color: #4a5468;
     margin: 4px 4px 10px !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
-    .count { color: #999; font-weight: 400; }
+    .count { color: #9aa1b0; font-weight: 400; }
   }
 }
 .kanban-card {
   background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border: 1px solid #e6e9f0;
+  border-radius: 10px;
   padding: 10px 12px;
   margin-bottom: 8px;
   font-size: 13px;
   line-height: 1.5;
-  .card-title { font-weight: 600; color: #222; margin: 0 0 6px; }
+  .card-title { font-weight: 600; color: #131c2e; margin: 0 0 6px; }
   .card-meta { display: flex; flex-wrap: wrap; gap: 4px; }
 }
 .tag {
@@ -126,11 +374,12 @@ body {
 
 /* ── 인쇄(PDF 저장) 시: 서류로 출력 ── */
 @media print {
-  .side-bar, .main-header, .site-footer, .search, .aux-nav { display: none !important; }
-  .main { margin-left: 0 !important; max-width: 100% !important; }
+  .side-bar, .main-header, .site-footer, .search, .aux-nav, .dev-session-banner { display: none !important; }
+  .main { margin-left: 0 !important; max-width: 100% !important; padding-top: 0 !important; }
   body { font-size: 11pt; }
   a, a:visited { color: #111; text-decoration: none; }
   table { page-break-inside: avoid; }
   h2 { page-break-after: avoid; }
   .kanban-board { min-width: 0; grid-template-columns: repeat(4, 1fr); }
+  .btn-cta { box-shadow: none; }
 }

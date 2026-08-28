@@ -12,7 +12,7 @@
 | **프로젝트명** | 상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발<br>(공공 데이터 Chunking 기반 Recall@5 91.5% / Latency -40%) |
 | **영문명** | Hybrid RAG for Structuring Commercial District Data and Agent Development for Entrepreneurship Analysis |
 | **팀명** | Beyond Facade / 정책 공시 RAG 파이프라인 |
-| **팀원** | 이은상 · 김충식 · 신채연 (3명) |
+| **팀원** | 김충식 · 이은상 · 신채연 (3명) |
 | **개발 기간** | 2026년 8월 20일 ~ 2026년 10월 27일 (10주) |
 | **깃허브** | https://github.com/eungsangcom/Metabole |
 | **데모 사이트** | https://metabole.beyondfacade.site |
