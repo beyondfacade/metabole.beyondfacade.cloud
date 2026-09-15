@@ -36,7 +36,7 @@ nav_order: 2
 | 분석 에이전트 | Sprint 3~4 | 이은상 · 신채연 |
 | Recall@5 평가셋 (질문-정답 쌍) | Sprint 3~4 | 전원 |
 | 통합 테스트 시나리오 | Sprint 4 | 김충식 |
-| 데모 배포 (metabole.beyondfacade.cloud) | Sprint 5 | 신채연 |
-| 최종 문서·성능 지표 정리, 발표 자료 | Sprint 5 | 전원 |
+| 데모 배포 (metabole.beyondfacade.cloud) | Sprint 4 | 신채연 |
+| 최종 문서·성능 지표 정리, 발표 자료 | Sprint 4 | 전원 |
 
 산출물별 일정 배경은 [단계별 개발 일정]({{ '/docs/schedule/timeline.html' | relative_url }})의 스프린트 보드와 맞물린다.
