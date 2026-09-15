@@ -18,7 +18,7 @@ nav_order: 2
 
 ## 백엔드·프론트엔드 표준
 
-- 백엔드는 FastAPI, 프론트엔드는 Flutter로 구현한다.
+- 백엔드는 FastAPI, 프론트엔드는 웹(Next.js)으로 구현한다.
 - 지도 데이터는 GeoJSON API로 주고받는다.
 - API 인증키는 환경변수로 관리하고 저장소에 커밋하지 않는다.
 
@@ -31,7 +31,7 @@ nav_order: 2
 | ERD 설계서 | Sprint 1~2 | 신채연 |
 | 와이어프레임·화면 설계 | Sprint 1 | 이은상 |
 | 데이터 수집 파이프라인 | Sprint 2 | 신채연 |
-| Flutter UI 프로토타입 | Sprint 2 | 이은상 |
+| 웹 UI 프로토타입 | Sprint 2 | 이은상 |
 | Hybrid RAG 파이프라인 | Sprint 3 | 신채연 |
 | 분석 에이전트 | Sprint 3~4 | 이은상 · 신채연 |
 | Recall@5 평가셋 (질문-정답 쌍) | Sprint 3~4 | 전원 |
