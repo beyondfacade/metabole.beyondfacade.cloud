@@ -40,6 +40,16 @@ nav_order: 1
 1) [용어 정의](/docs/appendix/glossary.html)  
 2) [관련 서식](/docs/appendix/forms.html)  
 
+## [6. 프로젝트 산출물](/docs/deliverables.html)
+
+1) [Milestone & WBS](/docs/deliverables/wbs.html)  
+2) [요구사항 정의서](/docs/deliverables/requirements-spec.html)  
+3) [상위 설계서](/docs/deliverables/high-level-design.html)  
+4) [상세 설계서](/docs/deliverables/detailed-design.html)  
+5) [시나리오 테스트](/docs/deliverables/test-scenario.html)  
+6) [최종 검수](/docs/deliverables/final-inspection.html)  
+7) [출품 시나리오](/docs/deliverables/demo-scenario.html)  
+
 ---
 
 [← 표지](/)
