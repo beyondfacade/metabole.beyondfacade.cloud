@@ -2,7 +2,7 @@
 layout: post
 title: 개발 일지
 permalink: /docs/devlog.html
-date: 2026-08-26
+date: 2026-09-07
 categories: devlog
 ---
 
@@ -304,6 +304,110 @@ categories: devlog
 - [ ] `feature/frontend-mvp` 병합/PR 결정 (v0.9.1 리뷰 클린 상태로 보존 중)
 - [ ] `region_industry_metric` 집계 BC 구현 — 실데이터 컬럼 기반, 프론트 실 API 전환(컷오버)의 선행 조건
 - [ ] 백엔드 컷오버 체크리스트 필수 4건 반영 후 mock → 실 API 전환
+- [ ] AWS G 인스턴스 쿼터 증설 신청 (8/25 이월)
+- [ ] 어린이집정보공개포털 승인 후 키 입력 (`CHILDCARE_API_KEY`, 8/25 이월)
+- [ ] 연령별 인구 2026.07분 1파일 추가 (공표 확인 후, 8/25 이월)
+
+## 2026-09-07
+
+### 1. [백엔드] 조회 API 계층 완성 — Backend v0.8.0~v0.9.0 (컷오버 선행 조건)
+
+- **v0.8.0 — region 11-File Set** (master BC 최초 라우터): `GET /regions/geojson` 서울 행정동
+  427개 경계 FeatureCollection 서빙. 좌표 소수 5자리 절삭(≈1.1m)으로 8.1MB→5.4MB(gzip 849KB),
+  `CachingRegionUseCaseProxy`(GoF Proxy) 프로세스 수명 캐시. CORS(프론트 3200)·GZip 미들웨어 추가
+- **v0.9.0 — metric BC 신설**: `region_industry_metric` 집계 — store 원천에서 행정동×업종×연도(2019~2026)
+  지표 **첫 적재 20,152건** (427동 × 6업종 × 8개년, store_count·open/close_count·closure_rate·growth_rate).
+  단계구분도 계약 `GET /metrics`, 점포 마커 `GET /stores`, 사이드패널 fact 카드 3장
+  `GET /regions/{code}/summary` — 에러 바디 `{error:{code,message}}` 단일 형식, 미지원 값은 404
+
+### 2. [백엔드] funding BC 신설 — Backend v0.10.0
+
+- 기업마당(bizinfo) 정책자금 공고 수집 — 1회 호출 전량 수신(~1,500건 상시), **첫 적재 1,499건**
+- `updtPnttm` 변경분만 갱신하는 멱등 업서트 + 일 배치 만료 처리(`deadline < today`, 연장·상시 복원),
+  hashtags·target_text는 **원문 보존 = LLM 구조화 추출 원천** (추출은 후속)
+- `GET /funding?limit=` 미만료 마감 임박순 + 일 1회 크론(05:10) 등록
+
+### 3. [백엔드] 수요·공급 데이터 적재 확장 — Backend v0.11.0~v0.13.0
+
+- **v0.11.0 — population_stat**: 주민등록 인구(행정동×연월×성별×5세 구간) wide 208컬럼 → long 변환,
+  **첫 적재 142,632건** (2019~2025 각년 12월 + 2026-06, 최신월 427/427 전체 커버, 서울 합계 9,289,813명)
+- **v0.12.0 — 학원(academy) 수집**: 서울 열린데이터광장 OA-20528 → store **25,514건** +
+  신규 `academy_course` **64,203건** (수강료 보유 41,332건, 평균 222,954원). 교습계열→5축
+  서브카테고리 dict 디스패치 94.1% 매핑, 교습과정명 원문 보존(대상학년 LLM 추출 원천)
+- **v0.13.0 — 부동산중개업(real_estate) 수집**: 브이월드 NED API → store **25개 구 25,317건 전량**
+  (영업중 25,237). 원천이 폐업분 미제공이라 **스냅샷 소실 기반 폐업 추정** 도입(최초 적재일 발동 금지
+  테스트 검증) — 개폐업 시계열은 적재 시작일(2026-09-07)부터 축적
+- 학원·부동산은 원천 좌표 부재로 lat/lng NULL 적재 — SGIS 지오코딩 후속 대기열 (지표 집계는 지오코딩 후 합류)
+
+### 4. [백엔드] shock BC 신설 — 특이변수 데이터 계층 (Backend v0.14.0)
+
+- `shock_event` 11-File Set — 4계층 `ShockLayer` StrEnum(policy/macro/trend/regional) +
+  `shock_event_industry` M:N, `GET /shocks` 타임라인 라우터
+- **코로나 거리두기 이력**: ODMS_COVID_12 API(일별 328건) 구간 압축 + 시드 23건(1차 거리두기~재강화
+  보충, 최저임금 2019~2026 시급 8,350→10,320원, 주 52시간제 3단계, 재난지원금·손실보상) —
+  **covid 계열 13건 2020-03-22~2022-04-17 공백 0일** 연속 커버, 지원금 폐업 '지연' 왜곡 주의를 description에 명시
+- **한국은행 기준금리**: ECOS 722Y001 월별 92행 적재 — 1.75%(2019-01)→0.5%(2020-05 저점)→
+  3.5%(2023-01 고점)→3.0%(2026-08) 사이클 확인. `interest_rate` 독립 시계열 + 주 1회 크론
+
+### 5. [백엔드] rent BC + 대출금리 — 계산기 데이터 축 (Backend v0.15.0~v0.16.0)
+
+- **v0.15.0 — rent BC 신설**: R-ONE 상업용부동산 임대동향조사 적재. 지역 단위가 자치구가 아니라
+  **상권/권역/시도 계층 실확인**(ERD 정정 — district FK nullable). 표본 빈티지 5개 × 지표 2 × 상가 2 =
+  통계표 20개 매핑 확정(738개 전수 조회, api.md ⑫ 기록), **첫 적재: 서울 관측 7,244행 → rent_price
+  3,638행** (2019Q1~2026Q2 30개 분기, 임대료·공실률 같은 행 병합 업서트). 표본: 광화문 중대형 공실률
+  10.0→18.1(2022Q1 코로나)→5.2%(2026Q2)
+- **v0.16.0 — 가중평균 대출금리 3계열**: ECOS COFIX 부재 전수 확인 후 은행연합회 스크래핑을
+  구현했으나 robots.txt 전면 불허 확인 → **우회 없이 전량 원복**, 정식 API인 ECOS 121Y006
+  (기업/중소기업/시설자금 대출) 3계열 273행으로 대체 — 2022 급등 사이클(3.30→5.67%) 실측 일치
+
+### 6. [백엔드] 편의점 분석 축 2단계 완성 — Backend v0.17.0~v0.18.0
+
+- **v0.17.0 — tobacco BC 신설**: 담배소매인 지정 현황(사실상 편의점 출점 가능 여부 결정 변수) —
+  인허가 아카이브 CSV **95,402행 적재** (좌표 90.1%, 행정동 공간조인 99.99%, 전 기간 개폐업 이력 보유).
+  담배소매인은 점포가 아니라 **지정 권리**라 store와 분리(별도 보조 테이블)
+- **v0.18.0 — convenience BC 신설**: 소진공 상가정보 sdsc2 × 행정동 427회 호출로 편의점 현행 스냅샷
+  **첫 적재 9,395건** (427/427 전 커버, 좌표·FK 100% 채움). 브랜드 분포: GS25 30.3% · CU 28.1% ·
+  세븐일레븐 26.7% · 이마트24 6.5%. `first_seen/last_seen` 관측 필드로 소실=폐점 추정 후보를 후속
+  분석에 위임 + 주 1회 크론(월 05:40). **백엔드 전체 테스트 135건 중 134 passed**
+
+### 7. [백엔드] 운영 정비 — 도커 이미지 갱신 + CLAUDE.md Part V (Backend v0.15.1)
+
+- 13일 전 구버전으로 돌던 `beyondfacade-api` 컨테이너를 v0.15.0 코드로 재빌드·재기동 —
+  `/regions/geojson` 427 features 등 실검증 통과, `BoundaryFileReader` 경로가 컨테이너 마운트와
+  일치함을 실확인
+- CLAUDE.md **Part V(프론트엔드 구조 규칙) 성문화** — Feature-Sliced 구조, mock API 계약,
+  토큰 기반 스타일·다크모드, TanStack Query, MapLibre WebGL 브리징, Vitest·TDD (실코드 관행 기반)
+
+### 8. [프론트엔드] 실경계·실 API 컷오버 + 범례 — Frontend v0.10.0~v0.12.0 (`feature/frontend-mvp`)
+
+- **v0.10.0**: mock 사각형 8개 → 백엔드 산출 **서울 행정동 427개 실경계 GeoJSON**으로 교체
+  (코로플레스가 서울 전역에 칠해짐)
+- **v0.10.1**: 단계구분도 색상을 연속 보간 → **이산 7클래스**로 교체 — sequential은 YlOrRd 7클래스 +
+  분위수 경계(동 색 대비 최대화), diverging은 RdBu 0 중심 대칭(성장률 부호 = 색 부호)
+- **v0.12.0 — 실 API 컷오버**: `NEXT_PUBLIC_API_BASE`로 지도 탭을 백엔드 v0.9.0 실 API에 연결
+  (geojson 427·metrics 427행·summary 카드·stores 역삼1동 카페 705행 — curl+브라우저 실검증).
+  AI 분석 탭만 mock 유지(RAG 백엔드 미구현). 컷오버 필수 결함 3건 수정(지도 에러 배너·SSE
+  JSON.parse 무가드·React key 중복) + **단계구분도 범례** 추가 — `makeMetricColorScale`이 페인트
+  색과 범례 구간의 단일 원천(`{colorOf, classes}`). vitest 39건·`tsc --noEmit` 통과
+
+### 9. [설계] RAG + 단일 에이전트 스펙·구현 계획 확정 (AI 분석 탭 실구현 준비)
+
+- **설계 스펙** (`docs/superpowers/specs/2026-09-07-rag-agent-design.md`): RAG 검색 계층
+  `apps/rag` BC(v0.19.0, `rag_chunk` 1536차원 벡터 + Recall@5 평가 하네스) → 에이전트 루프
+  `apps/agent` BC(v0.20.0, 도구 7종 = 기존 UseCase 래핑, **Port = Tool 원칙**) → 프론트 전환
+  (FE v0.13.0, SSE 계약 기존 그대로) → 두뇌 모델 평가(로컬 먼저, Gemini 다음)
+- **임베딩 혼용 구도 실측 확정**: 색인은 qwen3-embedding-4b fp16, 쿼리는 Q4 — 교차 런타임 검색
+  실측 **top-1 100% / top-5 85%**로 Q4 쿼리 기준선 검증 (lifetutorial의 로컬+Gemini 1536차원
+  이중 어댑터 패턴 이식). 평가 코퍼스로 정책자금 공고 200건 추출
+- **구현 계획** (`docs/superpowers/plans/2026-09-07-rag-agent.md`): **14태스크 로드맵** —
+  rag BC(Task 1~7) → agent BC(Task 8~11) → 프론트 전환(Task 12) → 모델 비교 평가(Task 13~14)
+
+### 다음 작업
+
+- [ ] **RAG+에이전트 구현 착수** — Task 1(rag_chunk 스키마 + HNSW 인덱스, BE v0.19.0)부터 14태스크 순차 진행
+- [ ] SGIS 지오코딩 — 학원·부동산중개 lat/lng NULL 대기열 해소 후 지표 집계 합류
+- [ ] `feature/frontend-mvp` 병합/PR 결정 (v0.12.0 컷오버 완료 상태로 보존 중)
+- [ ] docker-compose frontend 포트 매핑 `3200:3000` 불일치 정리 (포스트MVP 이연)
 - [ ] AWS G 인스턴스 쿼터 증설 신청 (8/25 이월)
 - [ ] 어린이집정보공개포털 승인 후 키 입력 (`CHILDCARE_API_KEY`, 8/25 이월)
 - [ ] 연령별 인구 2026.07분 1파일 추가 (공표 확인 후, 8/25 이월)
