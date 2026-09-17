@@ -8,7 +8,9 @@ nav_exclude: true
 
   <!-- ── 히어로 ── -->
   <section class="hero">
-    <p class="hero-eyebrow">TEAM BEYOND FACADE · PORTFOLIO</p>
+    <div class="hero-intro">
+    <div class="hero-copy">
+    <p class="hero-eyebrow">METABOLE · PROJECT DOCUMENTATION</p>
     <h1 class="hero-title">
       공공데이터로 창업의 질문에<br>
       <span class="accent">근거 있는 답</span>을 만듭니다
@@ -20,9 +22,17 @@ nav_exclude: true
       Hybrid RAG 파이프라인 위에 올립니다.
     </p>
     <div class="hero-actions">
-      <a class="btn-cta primary" href="{{ '/docs/overview.html' | relative_url }}">프로젝트 개요</a>
-      <a class="btn-cta ghost" href="{{ '/docs/devlog.html' | relative_url }}">개발 일지</a>
-      <a class="btn-cta ghost" href="https://github.com/beyondfacade/metabole.beyondfacade.cloud">GitHub</a>
+      <a class="btn-cta primary" href="{{ '/docs/overview.html' | relative_url }}">프로젝트 둘러보기 <span aria-hidden="true">↗</span></a>
+      <a class="btn-cta ghost" href="{{ '/docs/erd.html' | relative_url }}">데이터 모델 보기</a>
+    </div>
+    </div>
+    <aside class="hero-model" aria-label="메타볼레 데이터 흐름">
+      <div class="model-header"><span>FROM DATA TO ANSWERS</span><span>Hybrid RAG</span></div>
+      <div class="model-step"><strong>01 &nbsp; 공공데이터 수집</strong><span>인허가 · 인구 · 뉴스 · 정책자금</span></div>
+      <div class="model-step"><strong>02 &nbsp; 데이터 구조화</strong><span>마스터 → 원천 → 집계 → 검색</span></div>
+      <div class="model-step"><strong>03 &nbsp; 근거 기반 창업 분석</strong><span>상권 지도 · AI 분석 · 자금 연계</span></div>
+      <div class="model-footer"><span>서울 25개 구 · 10개 업종</span><a href="{{ '/docs/erd.html' | relative_url }}">ERD 살펴보기 ↗</a></div>
+    </aside>
     </div>
 
     <div class="stat-band">
@@ -45,26 +55,37 @@ nav_exclude: true
     </div>
   </section>
 
+  <section class="landing-section" aria-labelledby="explore-docs">
+    <h2 id="explore-docs">프로젝트를 읽는 네 가지 관점</h2>
+    <p class="section-sub">설계의 이유부터 실제 구현과 팀의 기록까지, 필요한 문서로 바로 이동하세요.</p>
+    <div class="doc-links">
+      <a class="doc-link" href="{{ '/docs/requirements/architecture.html' | relative_url }}"><span>01</span><span><strong>시스템 아키텍처</strong><small>수집부터 AI 분석까지의 전체 구조</small></span><span aria-hidden="true">↗</span></a>
+      <a class="doc-link" href="{{ '/docs/erd.html' | relative_url }}"><span>02</span><span><strong>ERD · 데이터 모델</strong><small>21개 테이블과 4개 계층의 연결</small></span><span aria-hidden="true">↗</span></a>
+      <a class="doc-link" href="{{ '/docs/deliverables.html' | relative_url }}"><span>03</span><span><strong>프로젝트 산출물</strong><small>요구사항, 설계, 테스트와 최종 점검</small></span><span aria-hidden="true">↗</span></a>
+      <a class="doc-link" href="{{ '/docs/devlog.html' | relative_url }}"><span>04</span><span><strong>개발 일지</strong><small>구현 과정과 의사결정의 기록</small></span><span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
   <!-- ── 무엇을 보여주는가 ── -->
   <section class="landing-section">
     <h2>이 프로젝트가 증명하는 것</h2>
     <p class="section-sub">기획부터 수집·분석·서빙까지, 데이터 프로덕트의 전 과정을 팀으로 완주합니다</p>
     <div class="value-grid">
       <div class="value-card">
-        <p class="value-icon">📊</p>
+        <p class="value-icon">01 / DATA</p>
         <h3>데이터 엔지니어링</h3>
         <p>서울시 상권분석, 행안부 인허가, 네이버 뉴스 같은 공공·개방 API를 수집 파이프라인으로 묶습니다.
         좌표계 변환(EPSG:5174→WGS84)부터 멱등 시드, 증분 커서, 오류 격리까지 운영 수준을 목표로 설계합니다.</p>
       </div>
       <div class="value-card">
-        <p class="value-icon">🤖</p>
+        <p class="value-icon">02 / INTELLIGENCE</p>
         <h3>Hybrid RAG · AI 에이전트</h3>
         <p>상권의 기초 체력(전통 변수 8종)과 외부 충격(특이변수 4계층)을 나눠 구조화하고,
         그 위에 창업 분석 에이전트를 올립니다.
         브이월드 지도 시각화와 정책자금 연계까지 한 흐름으로 다룹니다.</p>
       </div>
       <div class="value-card">
-        <p class="value-icon">🤝</p>
+        <p class="value-icon">03 / TEAMWORK</p>
         <h3>협업 프로세스</h3>
         <p>10주 애자일 스크럼 — 스프린트 계획, 칸반 보드, GitHub Flow(PR + 리뷰), 데일리 개발 일지 자동 동기화.
         이 문서 사이트 자체가 팀의 커뮤니케이션 결과물입니다.</p>

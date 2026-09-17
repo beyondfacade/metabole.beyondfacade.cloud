@@ -383,3 +383,6 @@ body:has(.dev-session-banner) .main {
   .kanban-board { min-width: 0; grid-template-columns: repeat(4, 1fr); }
   .btn-cta { box-shadow: none; }
 }
+
+@import "./custom/docs";
+@import "./custom/erd";

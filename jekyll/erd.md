@@ -3,24 +3,61 @@ layout: default
 title: ERD — 데이터 모델
 permalink: /docs/erd.html
 nav_order: 12
+erd: true
 ---
 
-# 메타볼레 — ERD
+<div class="erd-page" markdown="1">
 
-> **Status:** v2.0 (2026-09-17) — **실DB 스키마 기준.** 운영 DB의 `information_schema`(컬럼·PK·UK·FK)를 직접 조회해 옮겼다. 문서와 DB가 어긋나면 DB가 맞다.
-> **이력:** v1.0(Sprint 1)은 MVP 15테이블 설계 초안이다. 초안 대비 구현 변경분은 §8에 정리했다.
-> **설계 규칙:** ① 1NF→3NF 정규화, 역정규화는 집계 계층에만 허용하고 근거를 남긴다 ② 고립 테이블 금지 — 모든 테이블은 마스터 허브(`district`·`region`·`industry`)까지 FK 경로가 있어야 한다 ③ **1 테이블 = 1 Fractal 11-File Set = 1 AI 위임 단위** ([개발 표준 및 산출물]({{ '/docs/guidelines/standards.html' | relative_url }}))
+<header class="erd-header">
+  <p class="doc-eyebrow">METABOLE / DATA ARCHITECTURE</p>
+  <div class="erd-title-row"><h1 id="erd-title">데이터 모델 <span>ERD</span></h1><span class="erd-version">v2.0 · 구현 기준</span></div>
+  <p class="erd-lead">공공데이터가 분석의 근거가 되기까지.<br>21개 테이블의 관계와 네 계층의 데이터 흐름을 한눈에 살펴봅니다.</p>
+  <div class="erd-meta"><span>PostgreSQL + pgvector</span><span>스키마 확인 <time datetime="2026-09-17">2026.09.17</time></span><a href="#erd-changes">변경 이력 ↗</a></div>
+</header>
 
----
+<nav class="erd-layers" aria-label="데이터 계층별 상세">
+  <a class="erd-layer erd-master" href="#erd-master"><span class="erd-layer-label">01 <span>MASTER</span></span><strong>마스터 <b>6</b></strong><small>지역·업종의 기준이 되는 허브</small></a>
+  <a class="erd-layer erd-source" href="#erd-source"><span class="erd-layer-label">02 <span>SOURCE</span></span><strong>원천 <b>13</b></strong><small>인허가·스냅샷·외생 변수</small></a>
+  <a class="erd-layer erd-metric" href="#erd-serving"><span class="erd-layer-label">03 <span>METRICS</span></span><strong>집계 <b>1</b></strong><small>행정동 × 업종 × 연도 지표</small></a>
+  <a class="erd-layer erd-search" href="#erd-serving"><span class="erd-layer-label">04 <span>SEARCH</span></span><strong>검색 <b>1</b></strong><small>Hybrid RAG를 위한 검색 청크</small></a>
+</nav>
 
-## 1. 전체 ERD (구현 기준 — 21 테이블, 4 계층)
+<nav class="erd-jumpnav" aria-label="ERD 페이지 목차">
+  <a href="#erd-overview">전체 관계도</a><a href="#erd-master">마스터</a><a href="#erd-source">인허가</a><a href="#erd-snapshot">스냅샷</a><a href="#erd-external">외생 변수</a><a href="#erd-serving">집계·검색</a><a href="#erd-validation">설계 검증</a><a href="#erd-changes">변경 이력</a>
+</nav>
 
-테이블은 **마스터 → 원천 → 집계 → 검색** 계층으로 나뉘고, 계층이 곧 데이터 흐름이다. 한 화면에서 관계가 읽히도록 키 컬럼(PK·FK·UK)만 표기했고, 전체 컬럼은 §2~§6의 계층별 표에 있다.
+<details class="erd-principles" markdown="1">
+<summary>문서 기준과 설계 원칙 <span>실DB 스키마 · 정규화 · Fractal 11-File Set</span></summary>
 
-- 실선: DB `FOREIGN KEY` 제약이 걸린 관계
-- 점선: DB 제약 없이 애플리케이션에서만 잇는 관계 (사유는 §7)
+운영 DB의 `information_schema`(컬럼·PK·UK·FK)를 직접 조회해 옮겼다. 문서와 DB가 어긋나면 DB가 맞다. v1.0(Sprint 1)은 MVP 15테이블 설계 초안이며, 초안 대비 구현 변경분은 [§8](#erd-changes)에 정리했다.
+
+1. **1NF→3NF 정규화.** 역정규화는 집계 계층에만 허용하고 근거를 남긴다.
+2. **고립 테이블 금지.** 모든 테이블은 마스터 허브(`district`·`region`·`industry`)까지 FK 경로가 있어야 한다. 구현상의 예외는 [§7](#erd-validation)에 기록했다.
+3. **1 테이블 = 1 Fractal 11-File Set = 1 AI 위임 단위.** [개발 표준 및 산출물]({{ '/docs/guidelines/standards.html' | relative_url }})
+
+</details>
+
+## 1. 전체 관계도
+{: #erd-overview }
+
+키 컬럼(PK·FK·UK)을 중심으로 테이블 간 연결을 표시했다. 전체 컬럼과 설계 근거는 아래 계층별 명세에서 확인할 수 있다.
+
+<section class="erd-diagram" aria-label="전체 ERD 다이어그램" markdown="1">
+<div class="erd-toolbar">
+  <div class="erd-diagram-label"><span class="erd-live-dot" aria-hidden="true"></span><strong>Schema explorer</strong><span>21 tables</span></div>
+  <div class="erd-controls" hidden>
+    <button type="button" data-erd-action="out" aria-label="다이어그램 축소" title="축소">−</button>
+    <output class="erd-zoom" aria-live="polite" aria-label="다이어그램 배율">100%</output>
+    <button type="button" data-erd-action="in" aria-label="다이어그램 확대" title="확대">+</button>
+    <button type="button" data-erd-action="actual">실제 크기</button>
+    <button type="button" data-erd-action="fit">화면에 맞추기</button>
+    <button type="button" data-erd-action="expand" aria-pressed="false">크게 보기</button>
+  </div>
+</div>
+<div class="erd-viewport" tabindex="0" role="region" aria-label="ERD 관계도. 확대 후 방향키나 스크롤로 이동할 수 있습니다." markdown="1">
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Pretendard, sans-serif", "primaryColor": "#f0f5ff", "primaryTextColor": "#253952", "primaryBorderColor": "#96afcb", "lineColor": "#8093ac", "tertiaryColor": "#f8fafc"}, "er": {"useMaxWidth": false, "layoutDirection": "LR"}}}%%
 erDiagram
     %% ── 마스터 계층 ──
     district ||--o{ region : "포함"
@@ -159,6 +196,10 @@ erDiagram
     }
 ```
 
+</div>
+<div class="erd-legend"><span><i class="erd-line" aria-hidden="true"></i> DB 외래키 관계</span><span><i class="erd-line erd-line-dashed" aria-hidden="true"></i> 애플리케이션 관계</span><span class="erd-legend-help">확대 후 스크롤로 탐색 · 상세 컬럼은 아래 명세 참고</span></div>
+</section>
+
 한 줄 요약: **`region`·`district`·`industry`가 모든 엣지가 모이는 허브이고, 서비스 조회는 `region_industry_metric`(지도)과 `rag_chunk`(AI 검색) 두 곳으로 모인다.** 원천 테이블은 3NF를 엄격히 지키고, 역정규화는 집계 계층에만 둔다.
 
 ### 적재 현황 (2026-09-17, `pg_stat_user_tables` 추정치)
@@ -175,6 +216,7 @@ erDiagram
 ---
 
 ## 2. 마스터 계층 — 모든 엣지가 모이는 허브
+{: #erd-master }
 
 변화가 거의 없는 기준 데이터다. 원천 테이블은 이 허브에 FK로 연결되어 고립 테이블·고아 컬럼이 생기지 않는다.
 
@@ -191,6 +233,7 @@ erDiagram
 - **3NF:** `region`에 자치구명을 두면 이행 종속이 생기므로 `district`를 별도 테이블로 뺐다. 표본이 얇은 업종(노래방·당구장 등)을 자치구 단위로 집계하는 축으로도 쓴다.
 
 ## 3. 원천 계층 — 인허가
+{: #erd-source }
 
 지자체 인허가 데이터로, 개업일·폐업일이 있어 개폐업 시계열 분석의 원천이 된다.
 
@@ -204,6 +247,7 @@ erDiagram
 - **`tobacco_retailer`를 `store`에 합치지 않은 이유:** 담배소매인은 점포(업종)가 아니라 지정 권리다. 편의점·슈퍼·가판이 섞여 industry FK가 성립하지 않고, 지정일·취소일처럼 컬럼 축도 다르다.
 
 ## 4. 원천 계층 — 스냅샷
+{: #erd-snapshot }
 
 원천 API가 "현재 영업 중인 시설"만 돌려주는 데이터다. 폐업 이력이 없으므로 관측일(`first_seen_on`·`last_seen_on`)을 남겨 소실(폐점 추정 후보)을 추적한다.
 
@@ -219,6 +263,7 @@ erDiagram
 - **1NF:** 연령별 반·아동·대기 수, 교직원 직종·근속 분포는 컬럼 나열이 되므로 이번에는 수집하지 않았다. 쓰는 곳이 생기면 행 단위 테이블로 추가한다.
 
 ## 5. 원천 계층 — 외생 변수
+{: #erd-external }
 
 상권 밖에서 들어오는 변수(임대료·금리·특이 이벤트·뉴스·정책자금)다.
 
@@ -236,6 +281,7 @@ erDiagram
 - **`news_article.event_id`:** 기사를 `shock_event`로 승격하는 기능을 만들 때 컬럼과 FK를 함께 추가한다(구현 유보).
 
 ## 6. 집계 · 검색 계층 — 서비스 조회용
+{: #erd-serving }
 
 | 테이블 | 컬럼 | 비고 |
 |---|---|---|
@@ -248,6 +294,7 @@ erDiagram
 ---
 
 ## 7. 역정규화 · 고립 테이블 검증
+{: #erd-validation }
 
 **역정규화 현황 (근거 명시):**
 
@@ -275,6 +322,7 @@ erDiagram
 ---
 
 ## 8. v1.0 설계 초안 대비 구현 변경분
+{: #erd-changes }
 
 | 구분 | 내용 | 사유 |
 |---|---|---|
@@ -292,3 +340,5 @@ erDiagram
 ---
 
 > **문서 관리:** 본 ERD는 운영 DB 스키마를 기준으로 한다. 테이블·컬럼을 추가하거나 바꾸면 해당 계층 절과 §8 변경분 표를 함께 갱신하고, 새 테이블은 Fractal 11-File Set으로 구현한다. 구현 이력은 [개발 일지]({{ '/docs/devlog.html' | relative_url }})에, 모듈별 구현 방식은 [상세 설계서]({{ '/docs/deliverables/detailed-design.html' | relative_url }})에 있다.
+
+</div>

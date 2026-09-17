@@ -1,3 +1,7 @@
+<script src="{{ '/assets/js/docs.js' | relative_url }}" data-page-title="{{ page.title | escape }}" defer></script>
+{% if page.erd %}
+<script src="{{ '/assets/js/erd.js' | relative_url }}" defer></script>
+{% endif %}
 {% if site.data.dev_session.active %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
