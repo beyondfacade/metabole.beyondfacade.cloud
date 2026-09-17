@@ -28,11 +28,24 @@ nav_order: 4
 | metric | 지표 사전 집계 | 행정동×업종×연도 21,005건(어린이집·편의점 점포수 합류), 조회 API 3종 |
 | childcare | 어린이집 시설·정원/현원 이력 | 서울 3,940곳, 행정동 연결 426/427개 동, 주간 수집 크론 |
 | convenience | 편의점 점포·브랜드 분포 | 2026년 9,395곳/427개 동, 조회 API |
-| funding | 정책자금 공고 | 1,499건, 멱등 업서트 + 만료 배치 |
+| funding | 정책자금 공고 | 1,849건, 멱등 업서트 + 만료 배치 |
 | shock | 특이변수 4계층 | 거리두기 공백 0일 연속 커버, 기준금리 92행 |
 | rent · ECOS | 임대료·공실률·대출금리 | R-ONE 3,638행, 금리 3계열 273행 |
-| rag | 검색 계층 | 색인 6,157건, Recall@5 기준선 0.900 |
+| rag | 검색 계층 | 색인 6,645건(news 4,796 · funding 1,849), Recall@5 기준선 0.900(초기 색인 6,157건 기준) |
 | agent | AI 에이전트 코어 | LLM 게이트웨이 2종·도구 7종·에이전트 루프 (라우터·SSE 진행 중) |
+
+## 데이터베이스 설계 (ERD)
+
+운영 DB 스키마를 직접 조회해 확정한 최종 ERD는 **21테이블**이다(2026-09-17 기준). 테이블은 **마스터 → 원천(인허가·스냅샷·외생 변수) → 집계 → 검색** 계층으로 나뉘고, 원천 테이블 대부분은 마스터 허브(`district`·`region`·`industry`)에 FK로 연결된다. 전체 다이어그램, 테이블별 컬럼, 정규화·역정규화 근거, 설계 초안(15테이블) 대비 변경분은 [ERD — 데이터 모델]({{ '/docs/erd.html' | relative_url }}) 페이지에 있다.
+
+| 계층 | 테이블 | 비고 |
+|---|---|---|
+| 마스터 | district · region · industry · industry_subcategory · industry_source_code · population_stat | 행정동 427 · 업종 10종 |
+| 원천(인허가) | store · academy_course · tobacco_retailer | store 348,792행 |
+| 원천(스냅샷) | convenience_store · childcare_center · childcare_center_stat | 개폐업 이력 없음 → store와 분리 |
+| 원천(외생 변수) | rent_price · interest_rate · shock_event · shock_event_industry · shock_event_region · news_article · funding_program | funding_program은 DB FK 없음(후속 과제) |
+| 집계 | region_industry_metric | (행정동, 업종, 연도) 복합키 · 21,005행 |
+| 검색 | rag_chunk | 6,645행 · vector(1536) |
 
 ## 요구사항 별 상세설계
 

@@ -27,7 +27,7 @@ flowchart LR
   A2[수집 크론<br>일 1회 배치]:::ingest
   B1[(PostgreSQL<br>원천 3NF · BC 11개)]:::data
   B2[지표 집계<br>행정동×업종×연도 21,005건]:::data
-  B3[(pgvector<br>rag_chunk 6,157건 · HNSW)]:::data
+  B3[(pgvector<br>rag_chunk 6,645건 · HNSW)]:::data
   C1[임베딩 파이프라인<br>qwen3 1536차원<br>색인 fp16 / 쿼리 Q4]:::ai
   C2[AI 에이전트 루프<br>gemma3 로컬 · Gemini<br>도구 7종 + 계산기]:::ai
   D1[FastAPI<br>REST + SSE]:::serve

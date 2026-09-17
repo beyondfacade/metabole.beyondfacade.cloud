@@ -50,6 +50,8 @@ nav_order: 1
 6) [최종 검수](/docs/deliverables/final-inspection.html)  
 7) [출품 시나리오](/docs/deliverables/demo-scenario.html)  
 
+## [ERD — 데이터 모델](/docs/erd.html)
+
 ---
 
 [← 표지](/)

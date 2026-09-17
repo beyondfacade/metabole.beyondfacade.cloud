@@ -30,7 +30,7 @@ Sprint 4(10.01~10.08) 검수 단계의 기준 문서다. 수업 지침상 시나
 
 1. 저장소 clone → `.env` 작성 (공공 API 키·Gemini 키 — 저장소에 커밋하지 않음)
 2. `docker compose up -d` — PostgreSQL(+pgvector) 기동
-3. `alembic upgrade head` — 스키마 마이그레이션 (ERD 15테이블 + rag_chunk)
+3. `alembic upgrade head` — 스키마 마이그레이션 (ERD 21테이블, rag_chunk 포함)
 4. Ollama 모델 pull (`gemma3`, `qwen3-embedding` Q4)
 5. 수집 CLI 실행 또는 크론 등록 (`scripts/*.sh`) → 초기 적재
 6. `python -m ... build_rag_index` — RAG 초기 색인
