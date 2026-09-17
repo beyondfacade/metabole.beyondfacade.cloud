@@ -8,7 +8,7 @@ nav_order: 1
 
 # 1) 프로젝트 개발 Milestone & WBS
 
-전체 일정의 근거는 [단계별 개발 일정]({{ '/docs/schedule/timeline.html' | relative_url }})의 스프린트 로드맵이며, 이 문서는 그것을 수업 산출물 형식(마일스톤 + 작업 분해 구조)으로 재구성한 것이다.
+[단계별 개발 일정]({{ '/docs/schedule/timeline.html' | relative_url }})의 스프린트 로드맵을 근거로, 전체 일정을 수업 산출물 형식(마일스톤 + 작업 분해 구조)에 맞춰 재구성했다.
 
 ## 프로젝트 진행을 위한 서버 및 환경 구성
 
@@ -60,4 +60,4 @@ nav_order: 1
    5.3 최종 문서화 · 발표 자료 · DEMO 시연
 ```
 
-산출물별 담당은 [개발 표준 및 산출물]({{ '/docs/guidelines/standards.html' | relative_url }})의 산출물 목록을, 위험 요인은 [위험 관리 방안]({{ '/docs/schedule/risk.html' | relative_url }})을 따른다.
+산출물별 담당은 [개발 표준 및 산출물]({{ '/docs/guidelines/standards.html' | relative_url }})의 산출물 목록을 기준으로 삼고 위험 요인은 [위험 관리 방안]({{ '/docs/schedule/risk.html' | relative_url }})에서 다룬다.

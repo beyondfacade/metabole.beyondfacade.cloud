@@ -10,7 +10,7 @@ nav_order: 7
 
 ## 개발개요
 
-메타볼레는 서울 상권 공공데이터를 구조화해 예비 창업자에게 **데이터 근거가 있는 창업 분석**을 제공하는 Hybrid RAG 에이전트 서비스다. 사업 배경과 차별점은 [사업 개요]({{ '/docs/business-overview.html' | relative_url }})와 [기대 효과]({{ '/docs/business-overview/effects.html' | relative_url }}) 참조.
+메타볼레는 Hybrid RAG 에이전트 서비스다. 서울 상권 공공데이터를 구조화해 예비 창업자에게 **데이터 근거가 있는 창업 분석**을 전한다. 사업 배경과 차별점은 [사업 개요]({{ '/docs/business-overview.html' | relative_url }})와 [기대 효과]({{ '/docs/business-overview/effects.html' | relative_url }})에서 볼 수 있다.
 
 ## Data Flow (아키텍쳐링)
 
@@ -34,7 +34,7 @@ nav_order: 7
 | `GET /shocks` | 특이변수 타임라인 | 공개 가능 |
 | 에이전트 분석 (SSE) | AI 리포트 생성 | 비공개 유지 — LLM 비용·품질 통제, 데모 계정만 |
 
-공개 시 인증키·레이트리밋·출처 표기(공공데이터 이용 조건)를 전제로 하며, 상세 정책은 출품 시점에 확정한다.
+공개할 때는 인증키·레이트리밋·출처 표기(공공데이터 이용 조건)가 전제다. 상세 정책은 출품 시점에 확정한다.
 
 ## DEMO (상세 설계에 맞는 데모시연)
 
@@ -45,4 +45,4 @@ nav_order: 7
 3. **금융 계산기 (60초)** — 월세 vs 매입 입력 → 공시금리·실거래 기반 손익분기 결과
 4. **마무리 (30초)** — Recall@5 성능 수치, Data Flow 1장, 확장 계획(업종 추가 = 설정 추가)
 
-**시연 리스크 대비**: 오프라인 대비 로컬 전체 스택 자립 구동(외부 의존은 공공 API뿐), LLM 실패 시 사전 생성 리포트 폴백, 데모 직전 [최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }}) 설치 절차로 리허설.
+**시연 리스크 대비**: 오프라인에 대비해 로컬에서 전체 스택을 자립 구동한다(외부 의존은 공공 API뿐). LLM이 실패하면 사전 생성 리포트로 폴백하고 데모 직전에는 [최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }}) 설치 절차대로 리허설한다.

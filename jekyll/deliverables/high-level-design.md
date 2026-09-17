@@ -10,7 +10,7 @@ nav_order: 3
 
 ## 개발개요
 
-시스템은 **수집 → 적재 → 집계 → 서빙 → AI 분석**의 5단 데이터 흐름으로 구성된다. 설계 원칙(3계층 ERD, Fractal 11-File Set, Bounded Context 분리)은 [시스템 아키텍처]({{ '/docs/requirements/architecture.html' | relative_url }})에, 코드 규칙은 [개발 표준]({{ '/docs/guidelines/standards.html' | relative_url }})에 정리되어 있다.
+시스템은 **수집 → 적재 → 집계 → 서빙 → AI 분석**의 5단 데이터 흐름으로 구성된다. 설계 원칙(3계층 ERD, Fractal 11-File Set, Bounded Context 분리)은 [시스템 아키텍처]({{ '/docs/requirements/architecture.html' | relative_url }})에서 설명하고 코드 규칙은 [개발 표준]({{ '/docs/guidelines/standards.html' | relative_url }})에 모아 두었다.
 
 ## Data Flow (아키텍처링)
 
@@ -86,16 +86,16 @@ flowchart TB
 
 ### 요구사항 #1 — 지도 기반 상권 탐색 · 구현목표/설명
 
-행정동 경계 GeoJSON(427개, 좌표 절삭 5.4MB→gzip 849KB)을 캐시 프록시로 서빙하고, 사전 집계된 `region_industry_metric`으로 지도 응답 지연을 제거한다. MapLibre 코로플레스 이산 7클래스 + 범례로 판독성을 확보한다.
+행정동 경계 GeoJSON(427개, 좌표 절삭 5.4MB→gzip 849KB)을 캐시 프록시로 서빙하고 사전 집계된 `region_industry_metric`을 읽어 지도 응답 지연을 없앤다. MapLibre 코로플레스를 이산 7클래스로 나누고 범례를 붙여 판독성을 높인다.
 
 ### 요구사항 #2 — AI 창업 분석 리포트 · 구현목표/설명
 
-임베딩을 색인(fp16 정밀)과 쿼리(Q4 경량)로 분리해 GPU 상주 부담 없이 1536차원 규격을 통일한다. 에이전트는 LLM 게이트웨이 포트 뒤에 gemma3·Gemini를 어댑터로 두고, 도구 레지스트리(지표 조회·RAG 검색·계산기 등 7종)를 루프에서 호출해 SSE로 스트리밍한다.
+임베딩을 색인(fp16 정밀)과 쿼리(Q4 경량)로 분리해 GPU 상주 부담 없이 1536차원 규격을 통일한다. 에이전트는 LLM 게이트웨이 포트 뒤에 gemma3·Gemini를 어댑터로 두고 도구 레지스트리(지표 조회·RAG 검색·계산기 등 7종)를 루프에서 호출해 SSE로 스트리밍한다.
 
 ### 요구사항 #3 — 정책자금·금융 계산기 · 구현목표/설명
 
-기업마당 공고를 멱등 업서트 + 일 배치 만료 처리로 최신 상태를 유지하고, ECOS 대출금리 3계열·R-ONE 임대료를 근거로 손익분기를 계산한다. 금소법 경계(정보 제공까지만)를 UseCase 레벨에서 강제한다.
+기업마당 공고는 멱등 업서트와 일 배치 만료 처리로 최신 상태를 유지한다. 손익분기는 ECOS 대출금리 3계열·R-ONE 임대료를 근거로 계산한다. 금소법 경계(정보 제공까지만)는 UseCase 레벨에서 강제한다.
 
 ## 시나리오 테스트
 
-단위→통합 테스트 전략은 [시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }}) 산출물에서 상세히 다룬다. 개발 단계에서는 TDD(실패 테스트 선행)를 표준으로 하며, 품질 체계는 [품질 관리 및 테스트]({{ '/docs/guidelines/quality.html' | relative_url }})를 따른다.
+단위→통합 테스트 전략은 [시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }}) 산출물에서 상세히 다룬다. 개발 단계의 표준은 TDD(실패 테스트 선행)이고 품질 체계는 [품질 관리 및 테스트]({{ '/docs/guidelines/quality.html' | relative_url }})에 맞춘다.
