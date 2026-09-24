@@ -25,7 +25,7 @@ flowchart LR
 
   A1[공공 API 27종<br>LOCALDATA · 열린데이터광장<br>ECOS · R-ONE · 기업마당 · 브이월드]:::ingest
   A2[수집 크론<br>일 1회 배치]:::ingest
-  B1[(PostgreSQL<br>원천 3NF · BC 11개)]:::data
+  B1[(PostgreSQL<br>원천 3NF · 36테이블 · BC 16개)]:::data
   B2[지표 집계<br>행정동×업종×연도 21,005건]:::data
   B3[(pgvector<br>rag_chunk 6,645건 · HNSW)]:::data
   C1[임베딩 파이프라인<br>qwen3 1536차원<br>색인 fp16 / 쿼리 Q4]:::ai

@@ -60,7 +60,7 @@ nav_exclude: true
     <p class="section-sub">설계의 이유부터 실제 구현과 팀의 기록까지, 필요한 문서로 바로 이동하세요.</p>
     <div class="doc-links">
       <a class="doc-link" href="{{ '/docs/requirements/architecture.html' | relative_url }}"><span>01</span><span><strong>시스템 아키텍처</strong><small>수집부터 AI 분석까지의 전체 구조</small></span><span aria-hidden="true">↗</span></a>
-      <a class="doc-link" href="{{ '/docs/erd.html' | relative_url }}"><span>02</span><span><strong>ERD · 데이터 모델</strong><small>21개 테이블과 4개 계층의 연결</small></span><span aria-hidden="true">↗</span></a>
+      <a class="doc-link" href="{{ '/docs/erd.html' | relative_url }}"><span>02</span><span><strong>ERD · 데이터 모델</strong><small>36개 테이블과 데이터 계층의 연결</small></span><span aria-hidden="true">↗</span></a>
       <a class="doc-link" href="{{ '/docs/deliverables.html' | relative_url }}"><span>03</span><span><strong>프로젝트 산출물</strong><small>요구사항, 설계, 테스트와 최종 점검</small></span><span aria-hidden="true">↗</span></a>
       <a class="doc-link" href="{{ '/docs/devlog.html' | relative_url }}"><span>04</span><span><strong>개발 일지</strong><small>구현 과정과 의사결정의 기록</small></span><span aria-hidden="true">↗</span></a>
     </div>
