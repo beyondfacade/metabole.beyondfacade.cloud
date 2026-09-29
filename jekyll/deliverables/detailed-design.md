@@ -8,11 +8,11 @@ nav_order: 4
 
 # 4) 개발 항목 상세 설계서
 
-> 수업 지침에 따르면 상세 설계서는 개발 구현이 완료된 후 방법론을 기술하는 산출물이다. 데이터·RAG·AI 에이전트·채팅 관문·계획/조달 화면까지 구현이 끝난 범위를 기술한다(2026-09-25 기준). 남은 것은 실배포와 모바일 지도다. 구현 이력 전체는 [개발 일지]({{ '/docs/devlog.html' | relative_url }})에 버전 단위로 남아 있다.
+> 수업 지침에 따르면 상세 설계서는 개발 구현이 완료된 후 방법론을 기술하는 산출물이다. 데이터·RAG·AI 에이전트·채팅 관문·계획/조달 화면까지 구현이 끝난 범위를 기술한다(2026-09-28 기준). 09.28 서비스 방향을 네거티브 리포트로 전환해 판정(verdict) BC를 별도 브랜치에서 구현 중이며, 남은 것은 판정 카드·위험도 지도 화면, 실배포, 모바일 지도다. 구현 이력 전체는 [개발 일지]({{ '/docs/devlog.html' | relative_url }})에 버전 단위로 남아 있다.
 
 ## 개발개요
 
-백엔드는 Bounded Context 16개(master·store·metric·funding·news·shock·rent·tobacco·convenience·childcare·commerce·neighborhood·rag·agent·intent·finance)로 분리하고 데이터 테이블 하나마다 표준 파일 세트 하나(Fractal 11-File Set)를 구성했다. intent·finance는 상태가 없어 테이블 없이 유스케이스만 둔 BC다. 프론트엔드는 라우트 4개(`/`·`/map`·`/plan`·`/analysis`)에 `features/{landing, intent-gate, map-explorer, plan, agent-report}` 수직 분할 구조다.
+백엔드는 Bounded Context 16개(master·store·metric·funding·news·shock·rent·tobacco·convenience·childcare·commerce·neighborhood·rag·agent·intent·finance)로 분리하고 데이터 테이블 하나마다 표준 파일 세트 하나(Fractal 11-File Set)를 구성했다. intent·finance는 상태가 없어 테이블 없이 유스케이스만 둔 BC다. 09.28부터는 17번째 BC `verdict`(네거티브 판정)를 `feat/verdict-card` 브랜치에서 추가하고 있다(미병합). 프론트엔드는 라우트 4개(`/`·`/map`·`/plan`·`/analysis`)에 `features/{landing, intent-gate, map-explorer, plan, agent-report}` 수직 분할 구조다.
 
 ## Data Flow (아키텍처링)
 
@@ -24,8 +24,8 @@ nav_order: 4
 
 | 모듈(BC) | 목적 | 구현 실적 |
 |---|---|---|
-| store | 업종 10종 점포 원천 | 34.9만 행, 행정동 공간조인 99.996%, 좌표 없는 학원·부동산중개는 SGIS 지오코딩(99.5% 이상) |
-| metric | 지표 사전 집계·파생 | 행정동×업종×연도 27,829건 + 동네 유형 프로필 9,284건 + 시간대 어긋남 342,078건(배치 33초, 멱등), 조회 API `/metrics`·`/profiles`·`/hour-gaps` |
+| store | 업종 18종(기존 10 + 음식 8) 점포 원천 | 88.8만 행(음식 53.9만 행은 09.28 24구 적재), 행정동 공간조인 99.99%, 좌표 없는 학원·부동산중개는 SGIS 지오코딩(99.5% 이상). 음식은 인허가 일반음식점 슬러그 1개를 업태 분류기로 나눈다 |
+| metric | 지표 사전 집계·파생 | 행정동×업종×연도 55,093건(18업종) + 동네 유형 프로필 9,284건 + 시간대 어긋남 342,078건(배치 33초, 멱등), 조회 API `/metrics`·`/profiles`·`/hour-gaps` |
 | commerce | 서울 상권분석 업종 실적 | 추정매출 34.3만 · 점포 70.4만 · 매출 분해 789만 행(20분기), 계획 화면 월매출 프리필 원천 |
 | neighborhood | 동네 맥락 7종 + 상권 변화 | 105만 행(22분기), 유형 6종 판정 원천, `/commerce-changes` 영업 지속 개월 |
 | childcare | 어린이집 시설·정원/현원 이력 | 서울 3,940곳, 행정동 연결 426/427개 동, 주간 수집 크론(관측 2회) |
@@ -33,25 +33,26 @@ nav_order: 4
 | funding | 정책자금 공고·후보 필터 | 2,032건, 멱등 업서트 + 만료 배치, 조달 화면용 후보 공고 필터·확인할 질문 규칙 11종 |
 | shock | 특이변수 4계층 | 거리두기 공백 0일 연속 커버, 기준금리 92행 |
 | rent · ECOS | 임대료·공실률·대출금리 | R-ONE 3,638행, 금리 3계열 365행 |
-| rag | 검색 계층 | 색인 7,695건 전량 fp16, 평가셋 200건 검수 완료(confirmed 180) 기준 **Hit@5 1.000 · MRR 0.95**, 뉴스 같은 사건 접기 |
+| rag | 검색 계층 | 색인 7,980건 전량 fp16, 평가셋 200건 검수 완료(confirmed 180) 기준 **Hit@5 1.000 · MRR 0.95**, 뉴스 같은 사건 접기 |
 | agent | AI 에이전트 코어 | LLM 게이트웨이 2종(Gemini 우선·로컬 gemma4 폴백 혼합)·도구 10종·에이전트 루프(벽시계 예산 180초)·SSE 라우터 3종·리포트 영속화 |
 | intent | 채팅 관문 | 규칙 우선 파서(동·업종·예산 추출기 체인) + LLM 폴백, 한 줄 진단은 어휘 테이블 조립 |
 | finance | 계획·재무 계산 | 결정론 엔진 이식, `/finance/simulate`·`/finance/prefill`(월매출·권역 임대료·ECOS 금리 실측 프리필) |
+| verdict (구현 중) | 네거티브 판정 카드 | 공통 신호 5종 Specification, 427동 strict 백분위 상대평가, 판정 규칙 Chain of Responsibility, 새벽 배치 테이블 `region_industry_verdict`, API 3종. Task 1~6 구현·테스트 28건, Task 7(라우터·배치) 진행 |
 
 ## 데이터베이스 설계 (ERD)
 
-운영 DB 스키마를 직접 조회해 확정한 최종 ERD는 **36테이블**이다(2026-09-23 기준, 약 1,050만 행). 테이블은 **마스터 → 원천(인허가·스냅샷·외생 변수·서울 상권분석) → 집계·파생 → 검색·에이전트** 계층으로 나뉘고, 원천 테이블 대부분은 마스터 허브(`district`·`region`·`industry`)에 FK로 연결된다. 전체 다이어그램, 테이블별 컬럼, 정규화·역정규화 근거, 설계 초안(15테이블) 대비 변경분은 [ERD — 데이터 모델]({{ '/docs/erd.html' | relative_url }}) 페이지에 있다.
+운영 DB 스키마를 직접 조회해 확정한 최종 ERD는 **36테이블**이다(스키마 2026-09-23 확정, 적재 2026-09-28 실측 약 1,159만 행). verdict BC의 `region_industry_verdict`는 브랜치에만 있어 병합 시 37테이블이 된다. 테이블은 **마스터 → 원천(인허가·스냅샷·외생 변수·서울 상권분석) → 집계·파생 → 검색·에이전트** 계층으로 나뉘고, 원천 테이블 대부분은 마스터 허브(`district`·`region`·`industry`)에 FK로 연결된다. 전체 다이어그램, 테이블별 컬럼, 정규화·역정규화 근거, 설계 초안(15테이블) 대비 변경분은 [ERD — 데이터 모델]({{ '/docs/erd.html' | relative_url }}) 페이지에 있다.
 
 | 계층 | 테이블 | 비고 |
 |---|---|---|
-| 마스터 | district · region · industry · industry_subcategory · industry_source_code · population_stat | 행정동 427 · 업종 10종 |
-| 원천(인허가) | store · academy_course · tobacco_retailer | store 348,996행 |
+| 마스터 | district · region · industry · industry_subcategory · industry_source_code · population_stat | 행정동 427 · 업종 18종(화면 판정 대상 14종) |
+| 원천(인허가) | store · academy_course · tobacco_retailer | store 888,308행(09.28, 음식 8종 포함) |
 | 원천(스냅샷) | convenience_store · childcare_center · childcare_center_stat | 개폐업 이력 없음 → store와 분리 |
 | 원천(외생 변수) | rent_price · interest_rate · shock_event · shock_event_industry · shock_event_region · news_article · funding_program | funding_program은 DB FK 없음(후속 과제) |
 | 원천(상권분석 · 업종 실적) | region_commerce_sales · region_commerce_store · region_commerce_sales_breakdown | 동×업종×분기, 매출 분해는 1NF long 테이블 789만 행 |
 | 원천(상권분석 · 동네 맥락) | region_footfall_quarter · region_population_quarter · region_household_quarter · region_housing_average_quarter · region_facility_quarter · region_spending_quarter · region_commerce_change · seoul_commerce_change_baseline | 동×분기, 업종 축 없음 → 별도 BC |
-| 집계·파생 | region_industry_metric · region_profile_quarter · region_industry_hour_gap_quarter | 업종 지표 27,829행 · 동네 유형 9,284행 · 시간대 어긋남 342,078행 |
-| 검색·에이전트 | rag_chunk · analysis_report · llm_usage | 7,695행 · vector(1536) / 리포트 영속화·토큰 사용량 |
+| 집계·파생 | region_industry_metric · region_profile_quarter · region_industry_hour_gap_quarter | 업종 지표 55,093행 · 동네 유형 9,284행 · 시간대 어긋남 342,078행 |
+| 검색·에이전트 | rag_chunk · analysis_report · llm_usage | 7,980행 · vector(1536) / 리포트 영속화·토큰 사용량 |
 
 ## 요구사항 별 상세설계
 
@@ -65,6 +66,7 @@ nav_order: 4
 - 채팅 관문(09.23): 랜딩 입력창 → `POST /intent`가 동·업종·예산을 규칙 우선으로 추출(추출기 체인, LLM 폴백은 동 결측 시 1콜)하고, 후보가 여럿이면 칩으로 되묻는다(상태 기계 idle → pending → clarify → done). 한 줄 진단은 LLM이 아니라 어휘 테이블 조립이다.
 - 무대(09.23): 컨트롤바를 동네 무리(유형·심야 체류·음식/유흥 비중·영업 지속 개월, 동×분기)와 업종 무리(폐업률·성장률·점포수, 업종×연도)로 나눴다. 기본 지표는 **동네 유형 단계구분도**(범주형 계약 `/profiles/types`, 라이트/다크 팔레트 두 벌). 사이드패널은 ①어떤 동네인가 → ②하루 흐름(4블록 막대) → ③업종 시간대(유동·매출 두 선, `/hour-gaps`) → ④얼마나 버티나(서울 평균 동봉) → ⑤업종 실적 순서의 서사로 재배열했다.
 - 데이터 보유 범위(09.24): `metric-coverage.ts`를 단일 원천으로 두어 빈 지도가 되는 (업종, 지표, 시점) 조합을 셀렉터가 제안하지 않고, 범위 밖 시점은 가장 가까운 유효 시점으로 당긴다. 폐업 이력 없는 원천(어린이집·편의점·학원)은 배너·사이드패널에서 "집계 없음"으로 안내한다.
+- 업종 확장(09.28): 인허가 일반음식점은 슬러그 하나(`general_restaurants`)로 수집하고 건별 업종은 업태(`BZSTAT_SE_NM`) 분류기가 정한다(`PermitIndustryClassifier` 추상 + `FixedIndustryClassifier`·`BusinessTypeClassifier` Strategy). 6업종을 따로 받으면 같은 50만 건을 6번 받기 때문이다. 프론트는 `shared/industries.ts`를 단일 원천으로 판정 대상 14종과 업종 그룹(음식/생활/여가) optgroup을 상권 탐색 컨트롤바와 AI 분석 폼이 공유하고, 학원·어린이집은 판정 대상에서 빼 동 단위 보조축으로 쓴다.
 
 ### 요구사항 #2 — AI 창업 분석 리포트 · 구현방식 ✅ 구현 완료 (실 SSE 연동)
 
@@ -86,3 +88,14 @@ nav_order: 4
 - finance BC(09.23~09.24): 테이블 없는 BC로 결정론 엔진(80줄)을 산식 변경 없이 이식해 `POST /finance/simulate`(입력 13필드)를 두고, 계산은 코드가 하고 설명만 AI가 맡는다. `GET /finance/prefill?region&industry`가 월매출(상권분석 sales ÷ store ÷ 3)·권역 임대료·ECOS 금리를 실측으로 채우며 값마다 `basis`·`caveat`를 붙인다. 리포트 calculator 절은 이 엔진을 도구로 읽는다.
 - 조달·준비(09.24): `funding` 후보 공고 필터(미만료·업종·지역 조건, 후보 풀 92건)와 확인할 질문 생성 규칙 11종, 준비자료 목록을 `/plan` 화면 마지막 단계(조달·상담 준비)에 연결했다. 리포트 funding 절도 같은 결정론 후보를 읽는다. 상품 매칭·은행 추천은 하지 않는다.
 - 프론트 `/plan`(09.24): 실측 프리필 확인 → 재무 계산 → 최초안/현재안 비교 → 조달·상담 준비 흐름. 계획 초안은 `sessionStorage`에 둔다. E2E 11단계(관문 → 지도 → 분석 → 계획)가 실 백엔드 상대로 전 구간 통과했다.
+
+### 방향 전환 — 네거티브 판정 카드(verdict) · 구현방식 🔄 구현 중 (`feat/verdict-card`)
+
+09.28 브레인스토밍에서 서비스 방향을 "어디에 창업하면 좋다"가 아니라 **"이 동네에서 이 장사는 하지 마라"**로 바꿨다. 지방행정 인허가 원천은 폐업 21만 건을 점포 단위(개업일·폐업일·좌표)로 갖고 2019년부터 시계열이 있어 코호트 생존율과 백테스트가 가능하다는 점이 근거다. 설계서와 13 Task 플랜은 `docs/superpowers/specs/2026-09-28-verdict-card-design.md`·`plans/2026-09-28-verdict-card.md`에 있다.
+
+- 판정 구조: 점수 하나로 뭉개지 않고 **독립 경고 신호를 하나씩 켠다**(Specification 패턴, 신호 1개 = 클래스 1개). 1차 공통 신호 5종 — 순유출(12개월 폐업−개업 ÷ 시작 점포)·생존 절벽(3년 전 개업 코호트 생존율)·조기 폐업(최근 3년 폐업 영업개월 중위)·포화(상주인구 1,000명당 점포)·상권 축소(변화지표 HL). 표본 가드 미달은 `unavailable`.
+- 상대평가: 임계값은 사람이 정하지 않고 업종 안 **427동 strict 백분위**로 `p ≥ 75 → on`, `p ≥ 90 → strong`. 상수는 `VerdictThresholds` 한 곳에 두고 경계값은 배치마다 분포에서 재계산한다.
+- 판정 규칙: Chain of Responsibility로 `insufficient`(판정 가능 신호 < 3, 먼저 검사) → `red`(strong ≥ 2) → `orange`(켜진 신호 ≥ 1) → `clear`. 🟢 추천은 쓰지 않는다. 근거 문장은 규칙 코드가 숫자·비교 기준을 넣어 만들며 LLM은 관여하지 않는다.
+- 저장·API: 지도가 427동을 한 번에 칠하므로 요청 시 계산 대신 **새벽 배치 테이블 `region_industry_verdict`**(마이그레이션 `c9d0e1f2a3b4`, signals JSON)에 업서트한다. 신호 입력은 verdict BC 자체 게이트웨이가 store·metric·neighborhood ORM을 읽어(다른 BC 무변경) store 집계는 `group_by(region, industry)` + `percentile_cont(0.5)` 1쿼리로 낸다. API는 `/verdicts/myself`(배선 검증) · `/verdicts?industry=`(범주형 단계구분도) · `/verdicts/{region_code}?industry=` 3종.
+- 진행: Task 1~6(엔티티·신호·규칙·DTO/인터랙터·ORM·게이트웨이) 커밋 6개, 테스트 28건. Task 7(라우터·DI·`build_verdicts` CLI·실DB 배치 1회)이 진행 중이며 완료 시 BE v0.40.0으로 기록한다. 이어서 2단계 프론트 판정 카드·위험도 지도(FE v0.29.0), 3단계 폐업 마커 `GET /stores?status=closed`, 그 다음 백테스트와 업종 특화 신호 순서다.
+- 판정 대상: 기존 8종 + 음식 6종 = **14종**. 학원·어린이집은 정주 인구 지표이므로 판정 대상이 아니라 동 단위 보조축이다. 치킨은 인허가 신규 발급이 2017년 이후 없어 인허가 기반 신호에서 제외한다.

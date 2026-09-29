@@ -12,7 +12,7 @@ erd: true
   <p class="doc-eyebrow">METABOLE / DATA ARCHITECTURE</p>
   <div class="erd-title-row"><h1 id="erd-title">데이터 모델 <span>ERD</span></h1><span class="erd-version">v3.0 · 구현 기준</span></div>
   <p class="erd-lead">공공데이터가 분석의 근거가 되기까지.<br>36개 테이블의 관계와 마스터 → 원천 → 집계·파생 → 검색·에이전트로 이어지는 데이터 흐름을 한눈에 살펴봅니다.</p>
-  <div class="erd-meta"><span>PostgreSQL + pgvector</span><span>스키마 확인 <time datetime="2026-09-23">2026.09.23</time></span><a href="#erd-changes">변경 이력 ↗</a></div>
+  <div class="erd-meta"><span>PostgreSQL + pgvector</span><span>스키마 확인 <time datetime="2026-09-23">2026.09.23</time> · 적재 실측 <time datetime="2026-09-28">2026.09.28</time></span><a href="#erd-changes">변경 이력 ↗</a></div>
 </header>
 
 <nav class="erd-layers" aria-label="데이터 계층별 상세">
@@ -314,21 +314,21 @@ erDiagram
 <div class="erd-legend"><span><i class="erd-line" aria-hidden="true"></i> DB 외래키 관계</span><span><i class="erd-line erd-line-dashed" aria-hidden="true"></i> 애플리케이션 관계</span><span class="erd-legend-help">확대 후 스크롤로 탐색 · 상세 컬럼은 아래 명세 참고</span></div>
 </section>
 
-한 줄 요약: **`region`·`district`·`industry`가 모든 엣지가 모이는 허브이고, 서비스 조회는 지도의 `region_industry_metric`·`region_profile_quarter`·`region_commerce_change`, AI 검색의 `rag_chunk`로 모인다.** 원천 테이블은 3NF를 엄격히 지키고, 역정규화는 집계·파생 계층에만 둔다. 서울 상권분석서비스 계열 11테이블이 전체 행의 95%(약 999만 행)를 차지한다.
+한 줄 요약: **`region`·`district`·`industry`가 모든 엣지가 모이는 허브이고, 서비스 조회는 지도의 `region_industry_metric`·`region_profile_quarter`·`region_commerce_change`, AI 검색의 `rag_chunk`로 모인다.** 원천 테이블은 3NF를 엄격히 지키고, 역정규화는 집계·파생 계층에만 둔다. 서울 상권분석서비스 계열 11테이블이 전체 약 1,159만 행의 86%(약 999만 행)를 차지하고, 인허가 `store`는 09.28 음식 업종 8종 적재로 34.9만 → 88.8만 행이 됐다.
 
-### 적재 현황 (2026-09-23, `count(*)` 실측)
+### 적재 현황 (2026-09-28, `count(*)` 실측 — 음식 업종 24구 적재 반영, 총 약 1,159만 행)
 
 | 계층 | 테이블 (행 수) |
 |---|---|
-| 마스터 | district 25 · region 427 · industry 10 · industry_subcategory 8 · industry_source_code 25 · population_stat 142,632 |
-| 원천(인허가) | store 348,996 · academy_course 64,415 · tobacco_retailer 95,402 |
-| 원천(스냅샷) | convenience_store 9,395 · childcare_center 3,940 · childcare_center_stat 7,880 |
-| 원천(외생 변수) | rent_price 3,638 · interest_rate 365 · shock_event 26 · shock_event_industry 107 · shock_event_region **0** · news_article 5,808 · funding_program 2,032 |
+| 마스터 | district 25 · region 427 · industry **18** · industry_subcategory 8 · industry_source_code **32** · population_stat 142,632 |
+| 원천(인허가) | store **888,308**(영업 258,773 · 폐업 629,535, 음식 8종 539,112) · academy_course 64,716 · tobacco_retailer 95,402 |
+| 원천(스냅샷) | convenience_store 9,395 · childcare_center 3,940 · childcare_center_stat 11,819(스냅샷 3회) |
+| 원천(외생 변수) | rent_price 3,638 · interest_rate 365 · shock_event 26 · shock_event_industry 107 · shock_event_region **0** · news_article 5,970 · funding_program 2,068 |
 | 원천(상권분석 — 업종 실적) | region_commerce_sales 343,167 · region_commerce_store 704,470 · region_commerce_sales_breakdown **7,892,841** |
 | 원천(상권분석 — 동네 맥락) | region_footfall_quarter 205,700 · region_population_quarter 387,618 · region_household_quarter 149,353 · region_housing_average_quarter 9,331 · region_facility_quarter 187,000 · region_spending_quarter 102,850 · region_commerce_change 9,350 · seoul_commerce_change_baseline 22 |
-| 집계·파생 | region_industry_metric 27,829 · region_profile_quarter 9,284 · region_industry_hour_gap_quarter 342,078 |
-| 검색 | rag_chunk 7,695 (news · funding, 전건 fp16 임베딩) |
-| 에이전트 | analysis_report 7 · llm_usage 7 |
+| 집계·파생 | region_industry_metric **55,093**(18업종, 음식 27,264 추가) · region_profile_quarter 9,284 · region_industry_hour_gap_quarter 342,078 |
+| 검색 | rag_chunk 7,980 (news 5,912 · funding 2,068, 전건 fp16 임베딩) |
+| 에이전트 | analysis_report 22 · llm_usage 22 |
 
 ---
 
@@ -342,9 +342,9 @@ erDiagram
 | `district` | district_code(PK), name, opn_authority_code(UQ, nullable) | 서울 25개 자치구. opn_authority_code는 인허가 원천의 개방자치단체코드 매핑용 |
 | `region` | region_code(PK), district_code(FK), name, geometry_ref(nullable) | 행정동 427개. geometry_ref는 경계 GeoJSON 경로 |
 | `population_stat` | region_code(FK)+period+gender+age_from(복합 PK), age_to(nullable), population | 주민등록 인구. period는 YYYYMM, 5세 구간이며 100세 이상은 age_to가 NULL. 성별 계는 합산으로 도출 |
-| `industry` | industry_id(PK), name, demand_type | 업종 10종. demand_type은 수요동인 4유형 |
+| `industry` | industry_id(PK), name, demand_type | 업종 18종 — 기존 10종 + 09.28 음식 8종(한식·중식·일식·양식·분식·호프주점·치킨·`restaurant_other` 비노출). demand_type은 수요동인 4유형. 화면 판정 대상은 14종(학원·어린이집은 보조축) |
 | `industry_subcategory` | subcategory_id(PK), industry_id(FK), category_axis, target_group(nullable) | 교습계열·미용 세분 같은 업종 내부 분류 축 |
-| `industry_source_code` | id(PK), industry_id(FK), source_system, code · UQ(industry_id, source_system, code) | 원천 시스템(LOCALDATA·NEIS·상가정보·서울 상권분석 `seoul_commercial`)별 업종코드 매핑. 상권분석 코드는 cafe에 패스트푸드·분식, hair_salon에 네일·피부를 더해 16행 |
+| `industry_source_code` | id(PK), industry_id(FK), source_system, code · UQ(industry_id, source_system, code) | 원천 시스템(LOCALDATA·NEIS·상가정보·서울 상권분석 `seoul_commercial`)별 업종코드 매핑. 상권분석 코드는 cafe에 패스트푸드, hair_salon에 네일·피부를 더한 매핑. 09.28 인허가 `general_restaurants` 앵커 1행·상권분석 음식 7행을 더하고 cafe↔분식(CS100008)을 빼 32행 |
 
 - **1NF:** 인구의 연령대별 수치는 `age_10, age_20…` 컬럼이 아니라 행 단위로 둔다. 업종 1개가 원천 코드를 여러 개 가지는 경우(예: 편의점 = 담배소매인 + 상가정보 코드, 카페 = 상권분석 3코드)도 `industry_source_code`로 분리했다.
 - **3NF:** `region`에 자치구명을 두면 이행 종속이 생기므로 `district`를 별도 테이블로 뺐다. 표본이 얇은 업종(노래방·당구장 등)을 자치구 단위로 집계하는 축으로도 쓴다.
@@ -498,6 +498,8 @@ erDiagram
 
 | 구분 | 내용 | 사유 |
 |---|---|---|
+| **예정 (v3.1, `feat/verdict-card` 미병합)** | verdict 1 — `region_industry_verdict` | 네거티브 판정 카드의 새벽 배치 테이블(동×업종 판정·신호 JSON). 지도가 427동을 한 번에 칠하므로 요청 시 계산 대신 배치. 마이그레이션 `c9d0e1f2a3b4`는 브랜치에만 있고 main 병합 시 37테이블 |
+| **변경 (09.28)** | `industry` 8행 추가(한식·중식·일식·양식·분식·호프주점·치킨·restaurant_other), `industry_source_code` 인허가 `general_restaurants` 앵커 1행·상권분석 음식 7행 추가, cafe↔CS100008(분식) 삭제 → 32행 | 음식 업종 확장(BE v0.39.0, 마이그레이션 `b7c8d9e0f1a2`). 인허가 일반음식점은 슬러그 1개로 수집하고 업태(`BZSTAT_SE_NM`) 분류기가 업종을 정한다. 이후 store 888,308행·지표 55,093행 |
 | **신규 (v3.0, 09.23)** | commerce 3 — `region_commerce_sales`·`region_commerce_store`·`region_commerce_sales_breakdown` | 서울 상권분석서비스 업종 실적. 초안의 `sales_estimate`(추정매출)는 `region_commerce_sales`로 구현됨 |
 | **신규 (v3.0)** | neighborhood 8 — 유동인구·직장/상주인구·가구/아파트·주거 평균·집객시설·지출·상권 변화 + 서울 평균 기준선 | 동네 유형·시간대 서사의 원천. 업종 축이 없어 별도 BC |
 | **신규 (v3.0)** | metric 파생 2 — `region_profile_quarter`·`region_industry_hour_gap_quarter` | 동네 유형 6종 판정, 시간대 어긋남 |
