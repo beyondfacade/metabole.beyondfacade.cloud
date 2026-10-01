@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 1) 사업 목적
+title: 사업 목적
 permalink: /docs/business-overview/purpose.html
-parent: 1. 사업 개요
+parent: 3. 프로젝트 개요
 nav_order: 1
 ---
 
-# 1) 사업 목적
+# 사업 목적
 
 ## 배경 — 계약 전에 확인할 경고가 필요하다
 

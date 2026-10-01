@@ -59,7 +59,7 @@ def main():
     else:
         index = json.loads(search.read_text())
         urls = {row.get('url', '').split('#')[0] for row in index.values()}
-        for required in ('/docs/evidence.html', '/docs/requirements/service-platform.html', '/docs/erd.html', '/showcase/screens/'):
+        for required in ('/docs/evidence.html', '/docs/requirements/service-platform.html', '/docs/erd.html', '/showcase/screens/', '/docs/schedule/sprint2.html', '/docs/schedule/sprint3.html'):
             if not any(url.endswith(required) for url in urls):
                 errors.append(f'검색 색인 누락: {required}')
     for error in errors:

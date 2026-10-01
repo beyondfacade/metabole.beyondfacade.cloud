@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 1. 사업 개요
+title: 사업 개요 문서 안내
 permalink: /docs/business-overview.html
-nav_order: 5
-has_children: true
+nav_exclude: true
+search_exclude: true
 ---
 
-# 1. 사업 개요
+# 사업 개요 문서 안내
+
+이 문서 묶음은 새 목차에 맞게 재배치했습니다. [현재 목차 위치]({{ '/docs/overview.html' | relative_url }})에서 이어 읽을 수 있습니다.
 
 메타볼레가 왜 필요한지, 무엇을 만들고, 만들면 무엇이 좋아지는지를 정리한 장이다.
 

@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 3. 주요 개발 수행 지침
+title: 개발 수행 지침 문서 안내
 permalink: /docs/guidelines.html
-nav_order: 7
-has_children: true
+nav_exclude: true
+search_exclude: true
 ---
 
-# 3. 주요 개발 수행 지침
+# 개발 수행 지침 문서 안내
+
+이 문서 묶음은 새 목차에 맞게 재배치했습니다. [현재 목차 위치]({{ '/docs/deliverables/final-inspection.html' | relative_url }})에서 이어 읽을 수 있습니다.
 
 팀이 개발하면서 지키는 규칙이다. 협업 방식, 코드·산출물 표준, 품질 검증 방법으로 나뉜다.
 

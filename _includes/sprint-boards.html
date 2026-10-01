@@ -1,0 +1,33 @@
+<div class="sprint-planner">
+  {% for sprint in site.data.project_sprints.sprints %}
+  {% assign sprint_state = site.data.project_sprints.states | where: 'id', sprint.status | first %}
+  <section class="sprint-section" aria-labelledby="{{ sprint.id }}">
+    <h3 id="{{ sprint.id }}">{{ sprint.name | escape }} <span class="sprint-period">{{ sprint.period | escape }}</span> <span class="sprint-status sprint-status-{{ sprint.status }}">{{ sprint_state.label }}</span></h3>
+    <p class="sprint-phase">{{ sprint.phase | escape }} · {{ sprint.basis | escape }}</p>
+    {% if sprint.record_url %}<p><a href="{{ sprint.record_url | relative_url }}">{{ sprint.name | escape }} 일자별 진행 사항 →</a></p>{% endif %}
+    <p><strong>목표</strong> {{ sprint.goal | escape }}<br><strong>스프린트 종료 기준</strong> {{ sprint.exit | escape }}</p>
+    <details{% if sprint.current %} open{% endif %}>
+      <summary>칸반 보기 · {% for state in site.data.project_sprints.states %}{% assign tasks = sprint.tasks | where: 'status', state.id %}{{ state.label }} {{ tasks.size }}{% unless forloop.last %} / {% endunless %}{% endfor %}</summary>
+      <div class="sprint-board" role="group" aria-label="{{ sprint.name | escape }} 칸반">
+      {% for state in site.data.project_sprints.states %}
+        {% assign tasks = sprint.tasks | where: 'status', state.id %}
+        <section class="sprint-column sprint-column-{{ state.id }}" data-status="{{ state.id }}" aria-labelledby="{{ sprint.id }}-{{ state.id }}">
+          <h4 id="{{ sprint.id }}-{{ state.id }}">{{ state.label }} <span>{{ tasks.size }}</span></h4>
+          {% for task in tasks %}
+          <article class="sprint-card" id="wbs-{{ task.id | replace: '.', '-' }}">
+            <p class="sprint-task-id">WBS {{ task.id }}</p>
+            <h5>{{ task.title | escape }}</h5>
+            <p>{{ task.evidence | escape }}</p>
+            <p class="sprint-acceptance"><strong>종료 조건:</strong> {{ task.acceptance | escape }}</p>
+            <a href="{{ task.url | relative_url }}">작업 근거 <span class="sr-only">— {{ task.title | escape }}</span><span aria-hidden="true"> →</span></a>
+          </article>
+          {% else %}
+          <p class="sprint-empty">해당 작업 없음</p>
+          {% endfor %}
+        </section>
+      {% endfor %}
+      </div>
+    </details>
+  </section>
+  {% endfor %}
+</div>

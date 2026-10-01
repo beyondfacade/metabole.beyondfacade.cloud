@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 5. 부록
+title: 13. 부록
 permalink: /docs/appendix.html
-nav_order: 9
+nav_order: 13
 has_children: true
 ---
 
-# 5. 부록
+# 13. 부록
 
 본문을 읽다 막히는 용어와, 팀이 반복해서 쓰는 서식을 모았다.
 

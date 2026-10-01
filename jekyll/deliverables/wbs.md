@@ -1,44 +1,69 @@
 ---
 layout: default
-title: 1) Milestone & WBS
+title: 5. 마일스톤&WBS
 permalink: /docs/deliverables/wbs.html
-parent: 6. 프로젝트 산출물
-nav_order: 1
+nav_order: 5
+has_children: true
 ---
 
-# 1) 프로젝트 개발 Milestone & WBS
+# 5. 마일스톤&WBS
 
-## 프로젝트 진행을 위한 서버 및 환경 구성
+단계별 목표와 작업 상태를 스프린트 단위로 확인합니다. **카드의 완료는 해당 구현·기록 범위의 확인**을 뜻하며, 서비스 전체 테스트 통과나 운영 배포 완료를 뜻하지 않습니다.
 
-Jekyll 문서와 Next.js·FastAPI 서비스는 별도 프로젝트입니다. 로컬 서비스 화면은 2026-10-01 확인했으며 실제 서비스 주소는 [beyondfacade.cloud](https://beyondfacade.cloud)입니다. 운영 설정은 별도 검수 대상입니다. 서버 재기동·배포·마이그레이션은 이번 문서 작업 범위가 아닙니다.
-
-## Milestone
+## 단계별 개발 일정
 {: #current-milestone }
 
-| 구간 | 산출물 | 근거·상태 |
+{% include sprint-roadmap.html %}
+
+## 상태를 읽는 방법
+
+| 상태 | 의미 | 다음 단계로 옮기는 기준 |
 |---|---|---|
-| 데이터·검색 | 원천·지표·검색 평가 | 날짜별 개발 기록과 결과 JSON |
-| 9/29 창업 경고 | 규칙·지도·대안·백테스트 | 코드·백테스트 기록 확인 |
-| 9/30 후속 흐름 | 유사 사례·지원·계획·관제 | BE v0.63.0 / FE v0.51.0까지의 변경 |
-| 10/1 문구 정비 | 제공 범위·조건·경고 안내 | FE v0.52.1 |
-| 10/23까지 마무리 | 기능·문서·운영·성능 최종 검수 | 목표 일정, 검수 대기 |
-| 10/24~10/26 발표 준비 | 발표 자료 점검·시연 리허설 | 계획 |
-| 10/27 최종 발표 | 발표·DEMO | 사용자 확정 일정 |
+| 예정 | 계획만 있고 착수 기록 없음 | 작업 착수와 근거 기록 |
+| 진행 | 작업 중, 종료 조건 미충족 | 산출물과 검토 대상 제출 |
+| 검토 | 결과는 있으나 추가 확인 필요 | 카드의 종료 조건 충족 확인 |
+| 완료 | 카드 범위의 구현·기록 확인 | 새 이슈는 후속 작업으로 등록 |
 
-## WBS (현재 구현과 후속 작업)
+이 보드는 **2026-10-01 기준 기록**입니다. 새 작업·상태는 근거 확인 후 갱신합니다. 현재 Sprint 4의 칸반은 펼쳐 두었으며 다른 스프린트도 ‘칸반 보기’로 열 수 있습니다. 개인별 담당은 추정하지 않고 [팀 역할]({{ '/docs/team.html' | relative_url }})의 팀장·풀스택 공동 개발 체계를 따릅니다.
 
-| 작업 | 상태 | 산출물 |
-|---|---|---|
-| 원천별 수집·지역/업종 매핑 | 구현 확인 | 데이터 수집·ERD |
-| 판정 신호·가드·배치·API | 구현 확인 | 판정 규칙·지도 |
-| 두 축 대안·제외 상태 | 구현 확인 | 서비스 흐름·시나리오 |
-| 사실 선수집·6절 리포트 | 구현 확인 | 아키텍처·상세 설계 |
-| 지원 후보·자금 계산·상담 준비 | 구현 확인 | 서비스 흐름·산식 |
-| 업종별 백테스트·검색 평가 | 저장 기록 확인 | [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}) |
-| 공개 배포·부하시험·운영 보안 | 재확인 필요 | 최종 검수 |
-| 마무리·발표 일정·현재 역할 | 사용자 확인 반영 | 10/23 마무리·10/27 발표, 팀장·풀스택 공동 개발 |
+## 스프린트 목표와 칸반
 
-구현 확인은 이 작업에서 앱 전체 테스트를 새로 통과시켰다는 뜻이 아닙니다. 날짜가 다른 실적·목표를 합쳐 완료율을 만들지 않습니다.
+{% include sprint-boards.html %}
+
+## WBS — 작업 분해 구조
+
+칸반과 같은 작업을 산출물 기준으로 다시 읽습니다. 상태별 숫자는 작업 개수이며 프로젝트 완료율이 아닙니다.
+
+<div class="table-wrapper">
+<table>
+<thead><tr><th scope="col">WBS</th><th scope="col">작업·산출물</th><th scope="col">상태</th><th scope="col">종료 조건</th></tr></thead>
+<tbody>
+{% for sprint in site.data.project_sprints.sprints %}
+{% for task in sprint.tasks %}
+{% assign state = site.data.project_sprints.states | where: 'id', task.status | first %}
+<tr><td>{{ task.id }}</td><td><a href="{{ task.url | relative_url }}">{{ task.title | escape }}</a><br><small>{{ sprint.name | escape }} · {{ sprint.period | escape }}</small></td><td><span class="sprint-status sprint-status-{{ task.status }}">{{ state.label }}</span></td><td>{{ task.acceptance | escape }}</td></tr>
+{% endfor %}
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+## 스프린트 운영과 검수
+
+스프린트 시작 때 목표·종료 조건과 작업을 정하고, 작업 중에는 근거와 장애 요인을 갱신합니다. 종료 때는 산출물을 시연·검토하고 미완료 작업의 이월 사유를 남깁니다. 작업 수나 날짜 경과만으로 완료를 판단하지 않습니다.
+
+- [단계별 개발 일정·과거 기록]({{ '/docs/schedule/timeline.html' | relative_url }}) · [Sprint 1 일자별 기록]({{ '/docs/schedule/sprint1.html' | relative_url }})
+- 완료된 스프린트 상세: [Sprint 2 일자별 기록]({{ '/docs/schedule/sprint2.html' | relative_url }}) · [Sprint 3 일자별 기록]({{ '/docs/schedule/sprint3.html' | relative_url }})
+- [검증 결과와 구현 근거]({{ '/docs/evidence.html' | relative_url }}) · [시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }})
+- [위험 관리 방안]({{ '/docs/schedule/risk.html' | relative_url }}) · [최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }})
+
+## 서버 및 환경 구성
+
+Jekyll 문서와 Next.js·FastAPI 서비스는 별도 프로젝트입니다. 로컬 서비스 화면은 2026-10-01 확인했으며 실제 서비스 주소는 [beyondfacade.cloud](https://beyondfacade.cloud)입니다. 공개 배포·부하·보안 검수는 후속 작업으로 구분합니다.
+
+## 과거 계획 보관
+
+아래 10/8 종료 일정과 당시 역할·상태는 9/28 기록입니다. 현재 마감과 상태는 위 로드맵·칸반을 기준으로 읽습니다.
 
 <details markdown="1">
 <summary>2026-09-28 당시 WBS 원문 — 과거 계획</summary>

@@ -1,9 +1,12 @@
 ---
 layout: default
-title: 프로젝트 개요
+title: 3. 프로젝트 개요
 permalink: /docs/overview.html
-nav_order: 2
+nav_order: 3
+has_children: true
 ---
+
+# 3. 프로젝트 개요
 
 ## 계약 전에, 피해야 할 동네와 업종부터
 
@@ -39,6 +42,21 @@ nav_order: 2
 
 판정 대상은 카페·미용실·한식·중식·일식·양식·분식·호프·주점·노래방·PC방·헬스장·당구장입니다. 학원·어린이집은 정주 인구 보조 자료로 다루며 판정 선택 UI에 넣지 않습니다. 편의점·부동산중개업은 대리 원천을 구현했지만 재포함 백테스트 기준을 넘지 못했습니다.
 
+## 주제 구성 — 사용자 문제와 기술의 연결
+{: #topics }
+
+KDT 대주제 **“LLM(Large Language Model) : Finance 소비 분석 서비스”**와 초기 팀 과제명 **“상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발”**을 유지합니다. 현재 서비스 방향은 계약 전 창업 경고 확인입니다.
+
+| 소주제 | 사용자 문제 | 현재 구현과 확인할 문서 |
+|---|---|---|
+| 1. 공공데이터 수집·연계 | 개업·폐업 기록이 흩어져 있음 | 인허가·상권분석 자료를 지역·업종 축으로 연결. [데이터 수집]({{ '/docs/requirements/data-collection.html' | relative_url }}) |
+| 2. 창업 경고 판정 | 여러 수치 중 무엇부터 봐야 하는지 어려움 | 신호별 규칙·상대 백분위·표본 가드. [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}) |
+| 3. 근거 설명과 검색 | 경고의 이유와 맥락을 읽기 어려움 | 정형 사실을 먼저 수집하고 뉴스 검색과 LLM 설명을 결합. [RAG]({{ '/docs/requirements/rag-pipeline.html' | relative_url }}) |
+| 4. 경고 지도·리포트 | 후보 조합을 비교하고 싶음 | 최신 판정 지도와 6개 절 리포트. [서비스 흐름]({{ '/docs/requirements/service-platform.html' | relative_url }}) |
+| 5. 지원·자금 준비 | 다음 행동과 비용을 정리해야 함 | `/support` 공고·상담 창구, `/plan` 결정론 계산·상담 준비 |
+
+“AI가 판정한다”는 설명을 쓰지 않습니다. 현재 등급은 규칙 코드가 정하고 LLM은 근거를 설명합니다. 자금 계산도 코드가 수행합니다. 초기 설계의 변수 목록을 모두 구현한 기능처럼 나열하지 않습니다.
+
 ## 무엇을 검증했는가
 
 2022-06-30 시점 판정 후 365일 안에 개업한 카페를 비교한 기록에서, 비추천 집단 1,142곳의 3년 내 폐업률은 **76.8%**, 경고 없음 집단 1,680곳은 **38.2%**였습니다. 폐업률 비율은 **2.01배**입니다. 정확도나 인과 효과를 뜻하지 않습니다. 미용실은 1.41배, 다른 업종은 차이가 작거나 방향이 다르거나 표본이 적습니다. 전체 표와 관찰 조건은 [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }})에 있습니다.
@@ -59,3 +77,7 @@ nav_order: 2
 | 실제 서비스 | [beyondfacade.cloud](https://beyondfacade.cloud) — 문서 사이트와 별도 |
 
 현재 팀 역할은 [팀 소개]({{ '/docs/team.html' | relative_url }})에서 계획 당시 배정과 구분합니다. 문서 사이트 주소를 서비스 접속 주소로 안내하지 않습니다.
+
+## 사업 배경 상세
+
+[사업 목적]({{ '/docs/business-overview/purpose.html' | relative_url }}) · [주요 사업 내용]({{ '/docs/business-overview/scope.html' | relative_url }}) · [기대 효과]({{ '/docs/business-overview/effects.html' | relative_url }})

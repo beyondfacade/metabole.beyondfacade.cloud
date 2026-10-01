@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 3) 상권 공공데이터 수집 및 연계
+title: 상권 공공데이터 수집 및 연계
 permalink: /docs/requirements/data-collection.html
-parent: 2. 개발 요구 사항
-nav_order: 3
+parent: 7. 상위 설계서
+nav_order: 2
 ---
 
-# 3) 상권 공공데이터 수집 및 연계
+# 상권 공공데이터 수집 및 연계
 
 ## 경고의 근거가 되는 자료
 

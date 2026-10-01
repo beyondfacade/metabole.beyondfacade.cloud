@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 1) 용어 정의
+title: 용어 정의
 permalink: /docs/appendix/glossary.html
-parent: 5. 부록
+parent: 13. 부록
 nav_order: 1
 ---
 
-# 1) 용어 정의
+# 용어 정의
 
 ## 창업 경고·검증
 

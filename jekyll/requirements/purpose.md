@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 1) 목적
+title: 목적
 permalink: /docs/requirements/purpose.html
-parent: 2. 개발 요구 사항
+parent: 6. 요구사항정의서
 nav_order: 1
 ---
 
-# 1) 목적
+# 목적
 
 ## 시스템이 답하는 질문
 

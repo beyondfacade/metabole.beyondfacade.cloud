@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 5) 시나리오 테스트
+title: 9. 시나리오 테스트
 permalink: /docs/deliverables/test-scenario.html
-parent: 6. 프로젝트 산출물
-nav_order: 5
+nav_order: 9
+has_children: true
 ---
 
-# 5) 시나리오 테스트 (단위 → 통합 테스트)
+# 9. 시나리오 테스트
+
+[검증 결과와 구현 근거]({{ '/docs/evidence.html' | relative_url }})에서 백테스트·검색 평가의 조건과 한계를, [품질 관리 및 테스트]({{ '/docs/guidelines/quality.html' | relative_url }})에서 검수 기준을 확인합니다.
 
 ## 테스트 범위
 

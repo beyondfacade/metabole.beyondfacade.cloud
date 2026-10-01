@@ -1,0 +1,20 @@
+<div class="sprint-roadmap">
+  <p><strong>상태 기준일 {{ site.data.project_sprints.as_of }}</strong> · 프로젝트 마무리 <strong>10/23</strong> · 최종 발표 <strong>10/27</strong></p>
+  <p><strong>{{ site.data.project_sprints.status_note | escape }}</strong> 스프린트 상태와 개별 작업의 검토·완료 현황을 함께 표시합니다.</p>
+  <p>Sprint 1~3은 개발 기록을 재구성했습니다. Sprint 4~5의 구간과 작업 배분은 확정된 마감에 맞춘 <strong>후반 일정 재구성안</strong>입니다. 날짜가 지났다는 이유만으로 작업을 완료 처리하지 않습니다.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th scope="col">스프린트·기간</th><th scope="col">목표</th><th scope="col">진행사항</th></tr></thead>
+      <tbody>
+      {% for sprint in site.data.project_sprints.sprints %}
+        {% assign sprint_state = site.data.project_sprints.states | where: 'id', sprint.status | first %}
+        <tr>
+          <th scope="row"><a href="{{ '/docs/deliverables/wbs.html' | relative_url }}#{{ sprint.id }}">{{ sprint.name | escape }}</a><br>{{ sprint.period | escape }}{% if sprint.record_url %}<br><a href="{{ sprint.record_url | relative_url }}">일자별 진행 사항 →</a>{% endif %}</th>
+          <td>{{ sprint.goal | escape }}<br><small>{{ sprint.basis | escape }}</small></td>
+          <td><strong class="sprint-status sprint-status-{{ sprint.status }}">{{ sprint_state.label }}</strong><br><small>작업 현황</small><br>{% for state in site.data.project_sprints.states %}{% assign tasks = sprint.tasks | where: 'status', state.id %}{% if tasks.size > 0 %}<span class="sprint-status sprint-status-{{ state.id }}">{{ state.label }} {{ tasks.size }}</span> {% endif %}{% endfor %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

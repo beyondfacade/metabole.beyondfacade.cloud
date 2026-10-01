@@ -1,17 +1,6 @@
 /* 서비스 소개와 최종 산출물. 기존 문서 테마 위에 페이지 단위로 적용한다. */
 body:has(.mb-home) {
   background: #fafbf9;
-  .side-bar { background: #182d39; border-color: #182d39; }
-  .site-title, .brand-name { color: #fff !important; }
-  .brand-caption { color: #b3c2ce; }
-  .brand-mark { background: #d4e3fa; color: #183652; }
-  .nav-list .nav-list-item .nav-list-link { color: #c1ced8; &:hover, &:focus-visible { background: #29424f; color: #fff; } &.active { color: #fff; background: #304b5b; } }
-  .nav-list .nav-list-expander { color: #b3c2ce; }
-  .site-footer { border-color: #35505d; &, a, .nav-footer-label { color: #b3c2ce; } }
-  .site-header { border-color: #35505d; }
-  .side-bar .site-button { color: #fff; }
-  .side-bar #menu-button .icon { color: #d4e3fa !important; }
-  .side-bar .site-title:hover, .side-bar .site-button:hover { background: #29424f !important; }
   .main-header { background: #fff; }
   .main-content-wrap { padding-top: 30px; }
 }

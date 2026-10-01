@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 주요 사업 내용
+title: 주요 사업 내용
 permalink: /docs/business-overview/scope.html
-parent: 1. 사업 개요
+parent: 3. 프로젝트 개요
 nav_order: 2
 ---
 
-# 2) 주요 사업 내용
+# 주요 사업 내용
 
 ## ① 개업·폐업 기록을 비교 가능한 데이터로
 

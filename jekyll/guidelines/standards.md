@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 개발 표준 및 산출물
+title: 개발 표준 및 산출물
 permalink: /docs/guidelines/standards.html
-parent: 3. 주요 개발 수행 지침
-nav_order: 2
+parent: 10. 최종 검수
+nav_order: 1
 ---
 
-# 2) 개발 표준 및 산출물
+# 개발 표준 및 산출물
 
 ## 코드 구조 표준
 

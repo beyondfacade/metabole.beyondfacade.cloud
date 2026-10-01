@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 3) 품질 관리 및 테스트
+title: 품질 관리 및 테스트
 permalink: /docs/guidelines/quality.html
-parent: 3. 주요 개발 수행 지침
-nav_order: 3
+parent: 9. 시나리오 테스트
+nav_order: 2
 ---
 
-# 3) 품질 관리 및 테스트
+# 품질 관리 및 테스트
 
 ## 서로 다른 다섯 검증
 

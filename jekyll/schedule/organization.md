@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 조직 구성 및 역할 분담
+title: 조직 구성 및 역할 분담
 permalink: /docs/schedule/organization.html
-parent: 4. 개발 일정 및 추진 체계
-nav_order: 2
+parent: 4. 팀소개
+nav_order: 1
 ---
 
-# 2) 조직 구성 및 역할 분담
+# 조직 구성 및 역할 분담
 
 팀 Beyond Facade는 김충식 팀장과 신채연·이은상 풀스택 개발자로 구성된 3인 팀입니다. 프론트엔드·백엔드를 개인별 전담 영역으로 나누지 않고 기능에 필요한 작업을 함께 진행했습니다.
 

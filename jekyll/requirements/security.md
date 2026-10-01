@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 7) 보안 및 개인정보 보호
+title: 보안 및 개인정보 보호
 permalink: /docs/requirements/security.html
-parent: 2. 개발 요구 사항
-nav_order: 7
+parent: 6. 요구사항정의서
+nav_order: 4
 ---
 
-# 7) 보안 및 개인정보 보호
+# 보안 및 개인정보 보호
 
 ## 공공 분석 데이터와 계정 데이터를 구분한다
 

@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 3) 위험 관리 방안
+title: 위험 관리 방안
 permalink: /docs/schedule/risk.html
-parent: 4. 개발 일정 및 추진 체계
-nav_order: 3
+parent: 5. 마일스톤&WBS
+nav_order: 2
 ---
 
-# 3) 위험 관리 방안
+# 위험 관리 방안
 
 ## 데이터·검증 위험
 

@@ -2,8 +2,8 @@
 layout: default
 title: Sprint 1 일자별 진행 사항
 permalink: /docs/schedule/sprint1.html
-parent: 1) 단계별 개발 일정
-grand_parent: 4. 개발 일정 및 추진 체계
+parent: 단계별 개발 일정
+grand_parent: 5. 마일스톤&WBS
 nav_order: 1
 ---
 
@@ -36,3 +36,5 @@ nav_order: 1
 ---
 
 [← 단계별 개발 일정으로 돌아가기]({{ '/docs/schedule/timeline.html' | relative_url }})
+
+[Sprint 2 일자별 진행 사항 →]({{ '/docs/schedule/sprint2.html' | relative_url }})

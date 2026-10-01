@@ -1,9 +1,14 @@
 ---
 layout: default
-title: 팀 소개
+title: 4. 팀소개
 permalink: /docs/team.html
 nav_order: 4
+has_children: true
 ---
+
+# 4. 팀소개
+
+[조직 구성 및 역할 분담]({{ '/docs/schedule/organization.html' | relative_url }})에서 공동 개발 방식과 과거 배정 기록을 확인합니다.
 
 ## 팀 Beyond Facade (비욘드파사드)
 

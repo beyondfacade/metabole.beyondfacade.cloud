@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 4. 개발 일정 및 추진 체계
+title: 개발 일정 및 추진 체계 안내
 permalink: /docs/schedule.html
-nav_order: 8
-has_children: true
+nav_exclude: true
+search_exclude: true
 ---
 
-# 4. 개발 일정 및 추진 체계
+# 개발 일정 및 추진 체계 안내
+
+이 문서 묶음은 새 목차에 맞게 재배치했습니다. [현재 목차 위치]({{ '/docs/deliverables/wbs.html' | relative_url }})에서 이어 읽을 수 있습니다.
 
 현재 구현 마일스톤과 과거 스프린트 계획을 분리합니다. 프로젝트는 2026-10-23까지 마무리하고 10-27에 최종 발표합니다.
 

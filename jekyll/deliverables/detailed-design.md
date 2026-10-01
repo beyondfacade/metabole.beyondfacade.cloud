@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 4) 상세 설계서
+title: 8. 상세 설계서
 permalink: /docs/deliverables/detailed-design.html
-parent: 6. 프로젝트 산출물
-nav_order: 4
+nav_order: 8
+has_children: true
 ---
 
-# 4) 개발 항목 상세 설계서
+# 8. 상세 설계서
+
+[ERD — 데이터 모델]({{ '/docs/erd.html' | relative_url }})에서 테이블 관계·컬럼·변경 근거를 확인합니다. 구현의 측정 기록은 [검증 결과와 구현 근거]({{ '/docs/evidence.html' | relative_url }})로 연결합니다.
 
 > 구현 기준: 2026-10-01, `feat/warning-copy` · `750b4e5` (BE v0.63.0 / FE v0.52.1). 운영 배포 완료를 뜻하지 않습니다. [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}).
 

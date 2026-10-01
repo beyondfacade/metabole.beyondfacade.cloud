@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 관련 서식
+title: 관련 서식
 permalink: /docs/appendix/forms.html
-parent: 5. 부록
+parent: 13. 부록
 nav_order: 2
 ---
 
-# 2) 관련 서식
+# 관련 서식
 
 팀이 반복해서 쓰는 양식이다. 복사해서 채워 쓴다.
 

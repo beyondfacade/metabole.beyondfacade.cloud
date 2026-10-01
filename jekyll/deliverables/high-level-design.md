@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 3) 상위 설계서
+title: 7. 상위 설계서
 permalink: /docs/deliverables/high-level-design.html
-parent: 6. 프로젝트 산출물
-nav_order: 3
+nav_order: 7
+has_children: true
 ---
 
-# 3) 개발 항목 상위 설계서
+# 7. 상위 설계서
 
 ## 개발개요
 

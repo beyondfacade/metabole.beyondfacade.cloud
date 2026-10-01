@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 3) 기대 효과
+title: 기대 효과
 permalink: /docs/business-overview/effects.html
-parent: 1. 사업 개요
+parent: 3. 프로젝트 개요
 nav_order: 3
 ---
 
-# 3) 기대 효과
+# 기대 효과
 
 ## 창업 희망자에게
 

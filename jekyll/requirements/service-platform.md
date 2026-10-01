@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 5) 대민 서비스 플랫폼 기능
+title: 대민 서비스 플랫폼 기능
 permalink: /docs/requirements/service-platform.html
-parent: 2. 개발 요구 사항
-nav_order: 5
+parent: 6. 요구사항정의서
+nav_order: 3
 ---
 
-# 5) 대민 서비스 플랫폼 기능
+# 대민 서비스 플랫폼 기능
 
 > 구현 기준: 2026-10-01, `feat/warning-copy` · `750b4e5` (BE v0.63.0 / FE v0.52.1). 운영 배포 완료를 뜻하지 않습니다. [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}).
 

@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 1) 일반 사항
+title: 일반 사항
 permalink: /docs/guidelines/general.html
-parent: 3. 주요 개발 수행 지침
-nav_order: 1
+parent: 13. 부록
+nav_order: 3
 ---
 
-# 1) 일반 사항
+# 일반 사항
 
 ## 협업과 완료 기준
 

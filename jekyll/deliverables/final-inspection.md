@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 6) 최종 검수
+title: 10. 최종 검수
 permalink: /docs/deliverables/final-inspection.html
-parent: 6. 프로젝트 산출물
-nav_order: 6
+nav_order: 10
+has_children: true
 ---
 
-# 6) 최종 검수
+# 10. 최종 검수
 
 문서 개편 완료와 앱의 운영 배포 완료는 별개입니다. 이 문서는 현재 구현을 기준으로 시연·인수인계·운영 이전 시 확인할 항목을 정리합니다.
 

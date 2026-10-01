@@ -2,8 +2,9 @@
 layout: default
 title: ERD — 데이터 모델
 permalink: /docs/erd.html
-nav_order: 12
 erd: true
+parent: 8. 상세 설계서
+nav_order: 1
 ---
 
 <div class="erd-page" markdown="1">

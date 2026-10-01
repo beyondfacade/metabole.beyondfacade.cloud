@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 4) 데이터 구조화 및 Hybrid RAG 파이프라인
+title: 데이터 구조화 및 Hybrid RAG 파이프라인
 permalink: /docs/requirements/rag-pipeline.html
-parent: 2. 개발 요구 사항
-nav_order: 4
+parent: 7. 상위 설계서
+nav_order: 3
 ---
 
-# 4) 데이터 구조화 및 Hybrid RAG 파이프라인
+# 데이터 구조화 및 Hybrid RAG 파이프라인
 
 ## 검색은 경고의 설명을 돕는다
 

@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 요구사항 정의서
+title: 6. 요구사항정의서
 permalink: /docs/deliverables/requirements-spec.html
-parent: 6. 프로젝트 산출물
-nav_order: 2
+nav_order: 6
+has_children: true
 ---
 
-# 2) 개발 항목 요구사항 정의서
+# 6. 요구사항정의서
 
 ## 개발개요
 

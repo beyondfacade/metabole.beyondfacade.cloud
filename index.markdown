@@ -1,9 +1,9 @@
 ---
 layout: default
-title: 홈
-nav_order: 0
+title: 1. 홈
 home: true
 description: 계약 전에, 피해야 할 동네와 업종부터. 서울의 창업 경고를 살피는 메타볼레의 서비스 소개와 개발 기록입니다.
+nav_order: 1
 ---
 
 <div class="mb-home">

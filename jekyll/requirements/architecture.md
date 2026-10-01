@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 6) 시스템 아키텍처
+title: 시스템 아키텍처
 permalink: /docs/requirements/architecture.html
-parent: 2. 개발 요구 사항
-nav_order: 6
+parent: 7. 상위 설계서
+nav_order: 1
 ---
 
-# 6) 시스템 아키텍처
+# 시스템 아키텍처
 
 ## 데이터 수집 → 판정 → 설명
 

@@ -1,12 +1,12 @@
 ---
 layout: default
-title: 2) 개발 범위
+title: 개발 범위
 permalink: /docs/requirements/dev-scope.html
-parent: 2. 개발 요구 사항
+parent: 6. 요구사항정의서
 nav_order: 2
 ---
 
-# 2) 개발 범위
+# 개발 범위
 
 > 구현 기준: 2026-10-01, `feat/warning-copy` · `750b4e5` (BE v0.63.0 / FE v0.52.1). 운영 배포 완료를 뜻하지 않습니다. [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}).
 

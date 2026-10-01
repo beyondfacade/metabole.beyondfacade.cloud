@@ -1,12 +1,11 @@
 ---
 layout: default
-title: 7) 출품 시나리오
+title: 11. 출품시나리오
 permalink: /docs/deliverables/demo-scenario.html
-parent: 6. 프로젝트 산출물
-nav_order: 7
+nav_order: 11
 ---
 
-# 7) 출품 시나리오
+# 11. 출품시나리오
 
 ## 개발개요
 

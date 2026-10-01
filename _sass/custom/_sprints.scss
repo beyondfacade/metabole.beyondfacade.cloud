@@ -1,0 +1,71 @@
+/* 일정 문서에만 적용: 좁은 본문에서도 카드를 잘라내지 않는다. */
+.sprint-roadmap {
+  padding: 16px;
+  background: #f4f7fd;
+  border: 1px solid #dbe4f3;
+  border-radius: 12px;
+  small { color: #53627a; }
+  td { min-width: 135px; }
+}
+.sprint-status {
+  display: inline-block;
+  margin: 2px 0;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: #e7ecf4;
+  color: #344054;
+  white-space: nowrap;
+  &-doing { background: #e4edff; color: #1742a0; }
+  &-review { background: #fff0d1; color: #775000; }
+  &-done { background: #e0f2e9; color: #176443; }
+}
+.sprint-section {
+  margin: 32px 0;
+  h3 .sprint-period { display: inline-block; font-size: 0.8em; font-weight: 400; color: #53627a; }
+  h3 .sprint-status { font-size: 12px; vertical-align: middle; }
+  .sprint-phase { font-size: 13px; color: #53627a; }
+  summary { cursor: pointer; padding: 12px; background: #f1f4f9; border-radius: 8px; }
+  summary:focus-visible { outline: 3px solid #2257cf; outline-offset: 3px; }
+}
+.sprint-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.sprint-column {
+  min-width: 0;
+  padding: 10px;
+  background: #f4f6fa;
+  border-radius: 8px;
+  border-top: 3px solid #8a96aa;
+  &-doing { border-color: #2257cf; }
+  &-review { border-color: #b67c10; }
+  &-done { border-color: #23815a; }
+  h4 { margin: 0 0 12px; font-size: 14px; letter-spacing: normal; }
+  h4 span { font-weight: 400; color: #53627a; }
+}
+.sprint-card {
+  padding: 12px;
+  margin: 0 0 10px;
+  border: 1px solid #dce2ec;
+  border-radius: 7px;
+  background: #fff;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  h5 { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
+  p { margin: 8px 0; }
+  .sprint-task-id { font-size: 11px; color: #53627a; }
+  .sprint-acceptance { border-top: 1px solid #e6e9f0; padding-top: 8px; }
+}
+.sprint-empty { color: #53627a; font-size: 13px; }
+@media (max-width: 1200px) { .sprint-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .sprint-board { grid-template-columns: minmax(0, 1fr); } }
+@media print {
+  .sprint-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sprint-card { break-inside: avoid; }
+  .sprint-section details > .sprint-board { display: grid !important; }
+  // Closed details hide their contents through content-visibility, independently of display.
+  .sprint-section details::details-content { content-visibility: visible; }
+  .sprint-section summary { display: none; }
+}

@@ -39,7 +39,8 @@ defaults:
   - scope:
       path: "jekyll.md"
     values:
-      nav_order: 10
+      nav_order: 12
+      nav_title: 12. 개발일지
 
 exclude:
   - README.md

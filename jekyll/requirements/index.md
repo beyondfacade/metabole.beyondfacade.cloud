@@ -1,12 +1,14 @@
 ---
 layout: default
-title: 2. 개발 요구 사항
+title: 개발 요구 사항 문서 안내
 permalink: /docs/requirements.html
-nav_order: 6
-has_children: true
+nav_exclude: true
+search_exclude: true
 ---
 
-# 2. 개발 요구 사항
+# 개발 요구 사항 문서 안내
+
+이 문서 묶음은 새 목차에 맞게 재배치했습니다. [현재 목차 위치]({{ '/docs/deliverables/requirements-spec.html' | relative_url }})에서 이어 읽을 수 있습니다.
 
 무엇을 어디까지, 어떤 데이터로, 어떤 구조로 만들 것인지를 정의한 장이다.
 

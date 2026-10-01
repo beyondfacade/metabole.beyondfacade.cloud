@@ -2,7 +2,8 @@
 layout: default
 title: 검증 결과와 구현 근거
 permalink: /docs/evidence.html
-nav_order: 4.5
+parent: 9. 시나리오 테스트
+nav_order: 1
 ---
 
 # 검증 결과와 구현 근거
