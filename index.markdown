@@ -1,145 +1,62 @@
 ---
 layout: default
-title: 표지
-nav_exclude: true
+title: 홈
+nav_order: 0
+home: true
+description: 계약 전에, 피해야 할 동네와 업종부터. 서울의 창업 경고를 살피는 메타볼레의 서비스 소개와 개발 기록입니다.
 ---
 
-<div class="landing">
+<div class="mb-home">
+  <div class="mb-masthead"><span>BEYOND FACADE <span aria-hidden="true">/</span> METABOLE</span><span>서울의 기록에서, 창업의 다음 선택으로</span></div>
+  <section class="mb-hero" aria-labelledby="home-title">
+    <div class="mb-hero-copy">
+      <p class="mb-kicker"><span aria-hidden="true"></span> 메타볼레 · 창업 경고 서비스</p>
+      <h1 id="home-title" class="no_anchor">계약 전에,<br>피해야 할<br><em>조합부터.</em></h1>
+      <p class="mb-lead">마음에 둔 동네, 시작하고 싶은 업종.<br>개업·폐업 기록에 나타난 경고를 살피고<br>근거를 읽으며 다음 선택을 준비합니다.</p>
+      <div class="mb-actions">
+        <a class="mb-button" href="{{ '/showcase/screens/' | relative_url }}">최종 산출물 보기 <span aria-hidden="true">↗</span></a>
+        <a class="mb-text-link" href="https://beyondfacade.cloud">실제 서비스 <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="mb-hero-note">메타볼레를 만드는 과정과 구현 결과를 기록하는 곳입니다.</p>
+    </div>
+    <figure class="mb-scene">
+      <div class="mb-scene-caption"><span class="mb-crosshair" aria-hidden="true">◎</span><span>동네를 보고, 업종을 살피다<small>SEOUL · BEFORE YOU SIGN</small></span></div>
+      <img class="mb-city" src="{{ '/assets/images/seoul-diorama.webp' | relative_url }}" width="1600" height="1400" fetchpriority="high" alt="한강과 작은 상점, 건물들이 어우러진 서울의 입체 모형">
+      <img class="mb-pin" src="{{ '/assets/images/location-pin.webp' | relative_url }}" width="256" height="320" alt="위치를 가리키는 핀">
+      <div class="mb-scene-label"><span class="mb-label-icon" aria-hidden="true">↗</span><div><strong>동네 × 업종, 계약 전 확인</strong><span>경고 확인 <i>→</i> 근거 읽기 <i>→</i> 다음 준비</span></div></div>
+      <figcaption>서울을 표현한 개념 모형입니다. 실제 지도나 판정 결과가 아닙니다.</figcaption>
+    </figure>
+  </section>
 
-  <!-- ── 히어로 ── -->
-  <section class="hero">
-    <div class="hero-intro">
-    <div class="hero-copy">
-    <p class="hero-eyebrow">METABOLE · PROJECT DOCUMENTATION</p>
-    <h1 class="hero-title">
-      공공데이터로 창업의 질문에<br>
-      <span class="accent">근거 있는 답</span>을 만듭니다
-    </h1>
-    <p class="hero-lead">
-      <strong>메타볼레(Metabole)</strong>는 "이 동네, 이 업종으로 창업해도 될까?"라는 질문에
-      서울 상권 공공데이터로 답하는 AI 분석 에이전트를 만드는 10주 프로젝트입니다.
-      데이터를 AI가 읽기 좋게 조각내고(Chunking), 검색과 생성을 결합한
-      Hybrid RAG 파이프라인 위에 올립니다.
-    </p>
-    <div class="hero-actions">
-      <a class="btn-cta primary" href="{{ '/docs/overview.html' | relative_url }}">프로젝트 둘러보기 <span aria-hidden="true">↗</span></a>
-      <a class="btn-cta ghost" href="{{ '/docs/erd.html' | relative_url }}">데이터 모델 보기</a>
-    </div>
-    </div>
-    <aside class="hero-model" aria-label="메타볼레 데이터 흐름">
-      <div class="model-header"><span>FROM DATA TO ANSWERS</span><span>Hybrid RAG</span></div>
-      <div class="model-step"><strong>01 &nbsp; 공공데이터 수집</strong><span>인허가 · 인구 · 뉴스 · 정책자금</span></div>
-      <div class="model-step"><strong>02 &nbsp; 데이터 구조화</strong><span>마스터 → 원천 → 집계 → 검색</span></div>
-      <div class="model-step"><strong>03 &nbsp; 근거 기반 창업 분석</strong><span>상권 지도 · AI 분석 · 자금 연계</span></div>
-      <div class="model-footer"><span>서울 25개 구 · 10개 업종</span><a href="{{ '/docs/erd.html' | relative_url }}">ERD 살펴보기 ↗</a></div>
-    </aside>
-    </div>
+  <div class="mb-scope" aria-label="서비스 범위">
+    <div><strong>427<span>개 동</span></strong><p>서울의 행정동을 살펴봅니다</p></div>
+    <div><strong>12<span>개 업종</span></strong><p>화면 선택 14종 중 판정 대상</p></div>
+    <div class="mb-scope-note"><span class="mb-dot" aria-hidden="true"></span><p>경고 없음은<br><strong>성공·안전·추천을 보장하지 않습니다.</strong></p></div>
+  </div>
 
-    <div class="stat-band">
-      <div class="stat">
-        <p class="stat-number">91.5<span class="unit">%</span></p>
-        <p class="stat-label">Recall@5 목표<br>Hybrid 검색 성능</p>
-      </div>
-      <div class="stat">
-        <p class="stat-number">-40<span class="unit">%</span></p>
-        <p class="stat-label">Latency 개선 목표<br>Chunking 최적화</p>
-      </div>
-      <div class="stat">
-        <p class="stat-number">5.5만<span class="unit">+</span></p>
-        <p class="stat-label">인허가 개폐업 데이터<br>6업종 × 서울 25개 구</p>
-      </div>
-      <div class="stat">
-        <p class="stat-number">1,838<span class="unit">+</span></p>
-        <p class="stat-label">상권 뉴스 실수집<br>매시 자동 폴링 적재</p>
-      </div>
+  <section class="mb-story" aria-labelledby="journey">
+    <div class="mb-section-intro"><p class="mb-eyebrow">01 / 계약 전의 질문</p><h2 id="journey">시작을 서두르기 전에,<br>한 번 더 살펴볼 수 있도록.</h2><p>어느 동네에서 무엇을 할지 정했다면,<br>그 조합의 기록부터 확인합니다.</p></div>
+    <ol class="mb-steps">
+      <li><span>01</span><div><h3 id="home-check">경고를 확인합니다</h3><p>동네와 업종을 고르면 비추천·조건부·경고 없음·보류를 구분해 보여줍니다.</p></div><span aria-hidden="true">↗</span></li>
+      <li><span>02</span><div><h3 id="home-reasons">판정의 근거를 읽습니다</h3><p>수치와 출처를 함께 살핍니다. 조건에 맞는 후보가 있을 때 다른 업종이나 동네도 검토합니다.</p></div><span aria-hidden="true">↗</span></li>
+      <li><span>03</span><div><h3 id="home-prepare">다음 행동을 준비합니다</h3><p>리포트와 지원 정보를 읽고, 자금 계획에서 필요한 비용과 상담 질문을 정리합니다.</p></div><span aria-hidden="true">↗</span></li>
+    </ol>
+  </section>
+
+  <section class="mb-feature" aria-labelledby="documents">
+    <div class="mb-feature-copy"><p class="mb-eyebrow">02 / 실제로 만든 것</p><h2 id="documents">화면으로 만나는<br>메타볼레.</h2><p>조건 입력부터 경고 지도, 지원과 자금 준비까지.<br>실제 실행 화면에 설명을 붙였습니다.</p><a class="mb-button mb-button-light" href="{{ '/showcase/screens/' | relative_url }}">최종 산출물 살펴보기 <span aria-hidden="true">↗</span></a></div>
+    <div class="mb-feature-index" aria-label="최종 산출물 구성"><p>PRODUCT WALKTHROUGH</p><a href="{{ '/showcase/screens/' | relative_url }}#entry"><span>01</span>한 문장으로 시작 <span aria-hidden="true">↗</span></a><a href="{{ '/showcase/screens/' | relative_url }}#warning-map"><span>02</span>지도에서 확인 <span aria-hidden="true">↗</span></a><a href="{{ '/showcase/screens/' | relative_url }}#support"><span>03</span>지원 정보 탐색 <span aria-hidden="true">↗</span></a><a href="{{ '/showcase/screens/' | relative_url }}#plan"><span>04</span>자금 준비 <span aria-hidden="true">↗</span></a></div>
+  </section>
+
+  <section class="mb-reading" aria-labelledby="architecture">
+    <div class="mb-reading-heading"><div><p class="mb-eyebrow">03 / 설계와 기록</p><h2 id="architecture">결과 뒤의 과정도<br>열어볼 수 있습니다.</h2></div><a class="mb-text-link" href="{{ '/docs/toc.html' | relative_url }}">전체 문서 목차 <span aria-hidden="true">→</span></a></div>
+    <div class="mb-reading-grid">
+      <a href="{{ '/docs/evidence.html' | relative_url }}" id="validation"><span class="mb-eyebrow">EVIDENCE</span><h3 class="no_anchor">어디까지 확인했는가</h3><p>백테스트와 검색 평가,<br>결과를 해석할 때의 한계.</p><span class="mb-reading-arrow" aria-hidden="true">↗</span></a>
+      <a href="{{ '/docs/deliverables/detailed-design.html' | relative_url }}" id="decisions"><span class="mb-eyebrow">ENGINEERING</span><h3 class="no_anchor">어떻게 만들었는가</h3><p>데이터에서 판정과 설명까지,<br>설계 선택과 문제를 해결한 과정.</p><span class="mb-reading-arrow" aria-hidden="true">↗</span></a>
+      <a href="{{ '/docs/devlog.html' | relative_url }}"><span class="mb-eyebrow">JOURNAL</span><h3 class="no_anchor">무엇을 바꿔 왔는가</h3><p>기능을 만들고 검증하며<br>날짜별로 남긴 개발 기록.</p><span class="mb-reading-arrow" aria-hidden="true">↗</span></a>
     </div>
   </section>
 
-  <section class="landing-section" aria-labelledby="explore-docs">
-    <h2 id="explore-docs">프로젝트를 읽는 네 가지 관점</h2>
-    <p class="section-sub">설계의 이유부터 실제 구현과 팀의 기록까지, 필요한 문서로 바로 이동하세요.</p>
-    <div class="doc-links">
-      <a class="doc-link" href="{{ '/docs/requirements/architecture.html' | relative_url }}"><span>01</span><span><strong>시스템 아키텍처</strong><small>수집부터 AI 분석까지의 전체 구조</small></span><span aria-hidden="true">↗</span></a>
-      <a class="doc-link" href="{{ '/docs/erd.html' | relative_url }}"><span>02</span><span><strong>ERD · 데이터 모델</strong><small>36개 테이블과 데이터 계층의 연결</small></span><span aria-hidden="true">↗</span></a>
-      <a class="doc-link" href="{{ '/docs/deliverables.html' | relative_url }}"><span>03</span><span><strong>프로젝트 산출물</strong><small>요구사항, 설계, 테스트와 최종 점검</small></span><span aria-hidden="true">↗</span></a>
-      <a class="doc-link" href="{{ '/docs/devlog.html' | relative_url }}"><span>04</span><span><strong>개발 일지</strong><small>구현 과정과 의사결정의 기록</small></span><span aria-hidden="true">↗</span></a>
-    </div>
-  </section>
-
-  <!-- ── 무엇을 보여주는가 ── -->
-  <section class="landing-section">
-    <h2>이 프로젝트가 증명하는 것</h2>
-    <p class="section-sub">기획부터 수집·분석·서빙까지, 데이터 프로덕트의 전 과정을 팀으로 완주합니다</p>
-    <div class="value-grid">
-      <div class="value-card">
-        <p class="value-icon">01 / DATA</p>
-        <h3>데이터 엔지니어링</h3>
-        <p>서울시 상권분석, 행안부 인허가, 네이버 뉴스 같은 공공·개방 API를 수집 파이프라인으로 묶습니다.
-        좌표계 변환(EPSG:5174→WGS84)부터 멱등 시드, 증분 커서, 오류 격리까지 운영 수준을 목표로 설계합니다.</p>
-      </div>
-      <div class="value-card">
-        <p class="value-icon">02 / INTELLIGENCE</p>
-        <h3>Hybrid RAG · AI 에이전트</h3>
-        <p>상권의 기초 체력(전통 변수 8종)과 외부 충격(특이변수 4계층)을 나눠 구조화하고,
-        그 위에 창업 분석 에이전트를 올립니다.
-        브이월드 지도 시각화와 정책자금 연계까지 한 흐름으로 다룹니다.</p>
-      </div>
-      <div class="value-card">
-        <p class="value-icon">03 / TEAMWORK</p>
-        <h3>협업 프로세스</h3>
-        <p>10주 애자일 스크럼 — 스프린트 계획, 칸반 보드, GitHub Flow(PR + 리뷰), 데일리 개발 일지 자동 동기화.
-        이 문서 사이트 자체가 팀의 커뮤니케이션 결과물입니다.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 팀 ── -->
-  <section class="landing-section">
-    <h2>팀 소개</h2>
-    <p class="section-sub">Beyond Facade — 정책 공시 RAG 파이프라인 (3명)</p>
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="team-avatar">김</div>
-        <p class="team-name">김충식</p>
-        <p class="team-role">PM · 프로젝트 관리<br>스크럼 마스터 · 일정/품질 총괄</p>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">이</div>
-        <p class="team-name">이은상</p>
-        <p class="team-role">프론트엔드 · Flutter<br>AI 에이전트 개발</p>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">신</div>
-        <p class="team-name">신채연</p>
-        <p class="team-role">백엔드 개발<br>AI 에이전트 개발</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 프로젝트 정보 ── -->
-  <section class="landing-section">
-    <h2>프로젝트 정보</h2>
-    <p class="section-sub">상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발</p>
-    <div class="info-strip">
-      <dl>
-        <dt>개발 기간</dt>
-        <dd>2026. 8. 20 ~ 2026. 10. 27 (10주)</dd>
-      </dl>
-      <dl>
-        <dt>지역 · 업종 범위</dt>
-        <dd>서울 25개 구 · 타겟 10업종 (핵심 3종)</dd>
-      </dl>
-      <dl>
-        <dt>깃허브</dt>
-        <dd><a href="https://github.com/beyondfacade/metabole.beyondfacade.cloud">github.com/beyondfacade/metabole.beyondfacade.cloud</a></dd>
-      </dl>
-      <dl>
-        <dt>데모 사이트</dt>
-        <dd><a href="https://metabole.beyondfacade.cloud">metabole.beyondfacade.cloud</a></dd>
-      </dl>
-    </div>
-  </section>
-
-  <p class="landing-footnote">본 사이트는 Metabole 프로젝트의 개발 문서이자 팀 포트폴리오입니다.</p>
-
+  <section class="mb-team" aria-labelledby="team-heading"><div class="mb-team-mark" aria-hidden="true">m.</div><div><p class="mb-eyebrow">TEAM BEYOND FACADE</p><h2 id="team-heading">세 사람이 함께 만드는 메타볼레.</h2><p>김충식 · 팀장 <span aria-hidden="true">/</span> 신채연 · 이은상 · 풀스택 공동 개발</p></div><a class="mb-text-link" href="{{ '/docs/team.html' | relative_url }}">팀 소개 <span aria-hidden="true">↗</span></a></section>
+  <div class="mb-endnote"><span>프로젝트 마무리 <strong>2026.10.23</strong></span><span>최종 발표 <strong>2026.10.27</strong></span><a href="{{ '/docs/schedule/timeline.html' | relative_url }}">개발 일정 <span aria-hidden="true">↗</span></a></div>
 </div>

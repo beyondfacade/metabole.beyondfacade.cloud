@@ -2,4 +2,12 @@
 layout: default
 ---
 <h1>{{ page.title }}</h1>
+{% if page.path == 'jekyll.md' %}
+<aside class="history-notice" aria-label="개발 일지 읽기 안내">
+  <p>이 페이지는 날짜별 개발 기록입니다. 당시 범위·목표·구현 상태를 보존하고 있습니다.
+  현재 서비스는 계약 전에 확인하는 <strong>창업 경고</strong>를 중심으로 구성합니다.
+  <a href="{{ '/docs/overview.html' | relative_url }}">현재 서비스 소개</a>와
+  <a href="{{ '/docs/evidence.html' | relative_url }}">검증 결과·구현 기준</a>를 함께 읽어 주세요.</p>
+</aside>
+{% endif %}
 {{ content }}

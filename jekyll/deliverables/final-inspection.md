@@ -8,63 +8,58 @@ nav_order: 6
 
 # 6) 최종 검수
 
-Sprint 4(10.01~10.08) 검수 단계의 기준 문서다. 수업 지침상 시나리오 테스트 전/후 고객 환경에 구축/이전할지는 선택사항이다. 본 프로젝트는 **로컬 시연을 기본, AWS 이전을 가정 시나리오**로 준비한다.
+문서 개편 완료와 앱의 운영 배포 완료는 별개입니다. 이 문서는 현재 구현을 기준으로 시연·인수인계·운영 이전 시 확인할 항목을 정리합니다.
 
 ## 개발환경 (HW / SW)
 
-| 구분 | 내용 |
+| 구분 | 확인할 내용 |
 |---|---|
-| HW | 로컬 GPU 서버 (NVIDIA CUDA, Ollama 모델 상주) / 이전 대상: AWS G 계열 인스턴스 |
-| OS·런타임 | Linux, Docker Compose, Python 3.x (venv), Node 22 |
-| SW Stack | FastAPI · PostgreSQL+pgvector · Ollama(gemma3, qwen3-embedding) · Next.js — 상세는 [상위 설계서]({{ '/docs/deliverables/high-level-design.html' | relative_url }}) |
+| 실행 환경 | Linux·Python 가상환경·Node·잠금 파일 버전 |
+| 데이터 | PostgreSQL·pgvector, Alembic 적용 버전, 원천 기준일 |
+| 모델 | LLM·임베딩 제공자·모델 이름·연결·예산 |
+| 화면 | Next.js, `/api/backend` 프록시, MapLibre·브이월드 타일 |
+| 문서 | Jekyll·just-the-docs, 서비스와 다른 도메인 |
 
 ## 개발내용 Flow
 
 ### 동작과정
 
-수집 크론(일 1회) → 원천 적재(BC 11개) → 지표 집계 → RAG 색인 크론(05:50) → FastAPI 서빙(REST+SSE) → Next.js 웹. 전체 흐름도는 [상위 설계서 Data Flow]({{ '/docs/deliverables/high-level-design.html' | relative_url }})에 그려 두었다.
+원천 수집 → 집계·판정 배치 → 지도 조회 → 사실 선수집·설명 리포트 → 지원 → 자금 계산·상담 준비. [시스템 아키텍처]({{ '/docs/requirements/architecture.html' | relative_url }})
 
 ### 설치방법 (Source 이전 및 환경구성 방안)
 
-로컬 기준 설치 절차:
+아래는 **향후 인수인계 절차**이며 이번 문서 작업에서 실행한 서버 작업이 아닙니다.
 
-1. 저장소 clone → `.env` 작성 (공공 API 키·Gemini 키 — 저장소에 커밋하지 않음)
-2. `docker compose up -d` — PostgreSQL(+pgvector) 기동
-3. `alembic upgrade head` — 스키마 마이그레이션 (ERD 36테이블, rag_chunk·상권분석 계열 포함)
-4. Ollama 모델 pull (`gemma3`, `qwen3-embedding` Q4)
-5. 수집 CLI 실행 또는 크론 등록 (`scripts/*.sh`) → 초기 적재
-6. `python -m ... build_rag_index` — RAG 초기 색인
-7. 백엔드 `uvicorn` 기동, 프론트 `next build && next start`
+1. 실행할 브랜치·커밋을 고정하고 잠금 파일과 환경변수 이름을 확인합니다. 확인 기준은 `feat/warning-copy` / `750b4e5`이며 main 배포본과 같다고 가정하지 않습니다.
+2. 별도 검증 DB를 준비하고 Alembic 적용 상태·pgvector 확장을 확인합니다. 개발·운영 DB에 테스트를 실행하지 않습니다.
+3. 수집·색인·판정 배치 순서와 마지막 성공 로그, 원천 기준일을 확인합니다. ORM 개수와 실제 DB 테이블 개수를 구별합니다.
+4. LLM·임베딩·지도 외부 연결, 백엔드 주소와 프론트 프록시 설정을 확인합니다.
+5. 별도 승인된 실행 환경에서 서버를 구동하고 [서비스 흐름]({{ '/docs/requirements/service-platform.html' | relative_url }})의 경로와 예외를 리허설합니다.
 
-**Local → Amazon 이전 가정**:
+### Local → 운영 이전 가정
 
-| 구성요소 | 로컬 | AWS 이전 |
-|---|---|---|
-| DB | Docker PostgreSQL | RDS for PostgreSQL (pgvector 확장 활성화) 또는 EC2 컨테이너 유지 |
-| LLM/임베딩 | 로컬 GPU + Ollama | G 계열 EC2에 Ollama 동일 구성, 또는 Gemini API로 두뇌 대체(임베딩 쿼리만 CPU 인스턴스) |
-| 백엔드/크론 | 로컬 프로세스 + crontab | EC2 Docker 이미지 배포 + EventBridge/crontab |
-| 프론트 | 로컬 Next.js | Vercel 또는 EC2 — `NEXT_PUBLIC_API_BASE` env 1개 변경으로 컷오버 |
-
-이전할 때 데이터는 `pg_dump`/`pg_restore`로 이관한다. 벡터 컬럼을 포함한 전체가 표준 덤프로 이전되므로 재색인할 필요가 없다. 개발 ENV·OSS 라이브러리·Git·AI Model 의존은 requirements/lock 파일로 고정되어 있어 재현 가능하다.
+프론트 호스팅, 백엔드·모델·배치 실행 위치, DB·백업 복구, HTTPS와 프록시를 함께 결정해야 합니다. Vercel·터널·AWS는 검토된 선택지이며 배포 완료 실적이 아닙니다. DB 이전 후에는 행 수·스키마·검색·판정을 다시 검증합니다.
 
 ### 예외처리
 
-운영 중 예외(외부 API 실패·LLM 타임아웃·부분 적재 실패)를 처리할 때는 [시나리오 테스트의 예외처리 표]({{ '/docs/deliverables/test-scenario.html' | relative_url }})에 적힌 원칙을 검수 기준으로 삼는다.
+판정 없음, 표본 부족, 요약·판정의 독립 실패, LLM 지연, 지원 공고 없음, 계획 입력 변경을 [시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }})에 따라 확인합니다. 자동으로 사전 생성 리포트를 보여주는 기능은 검증되지 않았으므로 약속하지 않습니다.
 
 ### 사용자정의 설정방안
 
-- `.env`: API 키, DB 접속, `GEMINI_API_KEY`, 프론트 `NEXT_PUBLIC_API_BASE`·`NEXT_PUBLIC_VWORLD_KEY`
-- 색인 provider 선택: CLI `--provider {fp16|ollama|gemini}` — GPU 가용성에 따라 전환
-- 업종 추가: 설정(업종코드·데이터소스 매핑)만 추가하면 확장된다. [개발 표준]({{ '/docs/guidelines/standards.html' | relative_url }})의 `if 업종` 분기 금지 원칙을 지킨다.
+비밀값은 저장소 밖에서 관리합니다. `NEXT_PUBLIC_API_BASE`, 백엔드 프록시 주소, 지도 키, 모델 제공자, HTTPS 쿠키·OAuth 리다이렉트·전달 IP 신뢰 범위를 배포 환경에 맞춥니다. 새 업종은 매핑뿐 아니라 원천·표본·백테스트 검증이 필요합니다.
 
 ## 테스트 시나리오 / 시나리오 상세
 
-[시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }}) 산출물의 시나리오 1~4와 성능(TPS·Recall@5) 측정을 검수 항목으로 재사용한다. 완료 기준(Definition of Done)은 코드 리뷰 승인과 테스트 통과, 문서 반영을 모두 마치는 것이다.
+- [ ] 운영 대상 커밋·스키마·데이터 시점 확인
+- [ ] 앱 전체 테스트·시연·성능 검사 결과 첨부
+- [x] 공개 서비스 URL 확인: [beyondfacade.cloud](https://beyondfacade.cloud) (사용자 확인)
+- [ ] 실제 서비스의 HTTPS·인증·쿠키·프록시 동작 점검
+- [ ] 백업·복원·보존 정리·장애 대응 검증
+- [ ] 원천 이용 조건·공개 개인정보 안내 검토
+- [ ] 최종 기간·담당·산출물 인수 확인
+
+이 목록은 앱 최종 검수 대기 항목입니다. 문서 사이트 정비가 끝났다고 자동 체크하지 않습니다.
 
 ## 유지보수 방안
 
-- **데이터 신선도**: 수집·색인 크론이 무인으로 갱신하고 실패는 `logs/*.log`로 추적한다.
-- **버전 관리**: 백엔드/프론트가 각각 `ver_log`에 버전 단위로 기록하므로 회귀가 생기면 원인 버전을 특정할 수 있다.
-- **스키마 변경**: Alembic 마이그레이션으로만 수행하고 수기 DDL은 금지한다.
-- **평가 회귀**: 릴리스 전에 Recall@5 하네스를 재실행해 검색 품질 회귀를 감지한다.
-- **문서**: 본 사이트가 유지보수 기준 문서다. 구현 변경은 [개발 일지]({{ '/docs/devlog.html' | relative_url }})에 계속 기록한다.
+버전 로그, 배치 로그, 판정·검색 평가 기록에 기준일·커밋을 붙입니다. `cloud.beyondfacade/docs/jekyll.md`가 개발 일지 원본이며 `scripts/jekyll-devlog.sh`가 문서 저장소로 복사합니다. 복사본만 고치지 않습니다. 현재 방향 안내는 문서 저장소의 공통 레이아웃에서 제공합니다.

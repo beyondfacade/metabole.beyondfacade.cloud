@@ -1,6 +1,6 @@
 (() => {
   const main = document.querySelector('#main-content > main');
-  if (!main || main.querySelector('.landing, .erd-page')) return;
+  if (!main || main.querySelector('.landing, .erd-page, .mb-home, .mb-showcase')) return;
 
   const title = document.querySelector('script[data-page-title]')?.dataset.pageTitle;
   if (!main.querySelector('h1') && title) {

@@ -10,10 +10,12 @@ erd: true
 
 <header class="erd-header">
   <p class="doc-eyebrow">METABOLE / DATA ARCHITECTURE</p>
-  <div class="erd-title-row"><h1 id="erd-title">데이터 모델 <span>ERD</span></h1><span class="erd-version">v3.0 · 구현 기준</span></div>
-  <p class="erd-lead">공공데이터가 분석의 근거가 되기까지.<br>36개 테이블의 관계와 마스터 → 원천 → 집계·파생 → 검색·에이전트로 이어지는 데이터 흐름을 한눈에 살펴봅니다.</p>
+  <div class="erd-title-row"><h1 id="erd-title">데이터 모델 <span>ERD</span></h1><span class="erd-version">2026.10.01 · 코드 대조</span></div>
+  <p class="erd-lead">공공데이터가 분석의 근거가 되기까지.<br>현재 ORM 47개 테이블과 창업 경고 판정의 관계를 확인합니다. 아래 36테이블 상세 명세는 9/23 스키마·9/28 적재 기록으로 구분해 보존했습니다.</p>
   <div class="erd-meta"><span>PostgreSQL + pgvector</span><span>스키마 확인 <time datetime="2026-09-23">2026.09.23</time> · 적재 실측 <time datetime="2026-09-28">2026.09.28</time></span><a href="#erd-changes">변경 이력 ↗</a></div>
 </header>
+
+<p class="scope-note">아래 계층 수는 2026-09-23의 36테이블 스냅샷입니다. 현재 코드 목록과 추가 11개는 다음 절에서 구분합니다.</p>
 
 <nav class="erd-layers" aria-label="데이터 계층별 상세">
   <a class="erd-layer erd-master" href="#erd-master"><span class="erd-layer-label">01 <span>MASTER</span></span><strong>마스터 <b>6</b></strong><small>지역·업종의 기준이 되는 허브</small></a>
@@ -23,13 +25,13 @@ erd: true
 </nav>
 
 <nav class="erd-jumpnav" aria-label="ERD 페이지 목차">
-  <a href="#erd-overview">전체 관계도</a><a href="#erd-master">마스터</a><a href="#erd-source">인허가</a><a href="#erd-snapshot">스냅샷</a><a href="#erd-external">외생 변수</a><a href="#erd-commerce">업종 실적</a><a href="#erd-neighborhood">동네 맥락</a><a href="#erd-serving">집계·파생</a><a href="#erd-agent">검색·에이전트</a><a href="#erd-validation">설계 검증</a><a href="#erd-changes">변경 이력</a>
+  <a href="#erd-current">현재 추가·변경</a><a href="#erd-inventory">현재 테이블 목록</a><a href="#erd-overview">전체 관계도</a><a href="#erd-master">마스터</a><a href="#erd-source">인허가</a><a href="#erd-snapshot">스냅샷</a><a href="#erd-external">외생 변수</a><a href="#erd-commerce">업종 실적</a><a href="#erd-neighborhood">동네 맥락</a><a href="#erd-serving">집계·파생</a><a href="#erd-agent">검색·에이전트</a><a href="#erd-validation">설계 검증</a><a href="#erd-changes">변경 이력</a>
 </nav>
 
 <details class="erd-principles" markdown="1">
 <summary>문서 기준과 설계 원칙 <span>실DB 스키마 · 정규화 · Fractal 11-File Set</span></summary>
 
-운영 DB의 `information_schema`(컬럼·PK·UK·FK)를 직접 조회해 옮겼다. 문서와 DB가 어긋나면 DB가 맞다. v1.0(Sprint 1)은 MVP 15테이블 설계 초안, v2.0(09.17)은 21테이블 구현본이며, v3.0(09.23)은 서울 상권분석서비스 계열 11테이블·파생 2테이블·에이전트 2테이블을 더한 36테이블이다. 초안 대비 변경분은 [§11](#erd-changes)에 정리했다.
+기존 v3.0 명세는 2026-09-23 운영 DB의 `information_schema`(컬럼·PK·UK·FK)를 조회한 기록이다. 이번 2026-10-01 정비는 `750b4e5`의 ORM 코드를 읽어 추가·변경을 보완했으며 DB를 재조회하지 않았다. 문서와 DB가 어긋나면 DB가 맞다. v1.0(Sprint 1)은 MVP 15테이블 설계 초안, v2.0(09.17)은 21테이블 구현본이며, v3.0(09.23)은 서울 상권분석서비스 계열 11테이블·파생 2테이블·에이전트 2테이블을 더한 36테이블이다. 초안 대비 변경분은 [§11](#erd-changes)에 정리했다.
 
 1. **1NF→3NF 정규화.** 역정규화는 집계·파생 계층에만 허용하고 근거를 남긴다.
 2. **고립 테이블 금지.** 모든 테이블은 마스터 허브(`district`·`region`·`industry`)까지 FK 경로가 있어야 한다. 구현상의 예외는 [§10](#erd-validation)에 기록했다.
@@ -37,14 +39,68 @@ erd: true
 
 </details>
 
+## 현재 추가·변경 — 2026-10-01
+{: #erd-current }
+
+`feat/warning-copy / 750b4e5`의 `backend/apps/**/adapter/outbound/orms/*.py`에서 `__tablename__` **47개**를 확인했습니다. Alembic 버전 테이블은 제외한 코드상 목록이며 실제 DB 적용·행 수는 재측정하지 않았습니다. [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }})
+
+| 추가 테이블 (기존 36 + 11) | 역할·연결 |
+|---|---|
+| `region_industry_verdict` | region·industry 복합 PK/FK, 동×업종 최신 판정 |
+| `apt_trade_count` | district FK, 법정동·월별 아파트 거래. 부동산 참고 지표 원천 |
+| `admin_user`·`admin_session` | 계정과 세션. 세션의 admin_user_id FK |
+| `access_event`·`admin_audit` | 접속·감사 기록. 계정/행위자 nullable FK |
+| `ip_block`·`access_rule`·`security_setting` | 접근 통제·설정. 등록/수정 계정 nullable FK |
+| `llm_call_event` | 호출 단위 모델·결과·지연·오류 관측. ORM상 DB FK 없음 |
+| `host_metric_sample` | 시점별 호스트 자원 관측. ORM상 DB FK 없음 |
+
+운영 관측 테이블에 마스터 FK가 없는 것은 코드 그대로 표시합니다. 고립 테이블 금지라는 초기 설계 원칙을 맞추려고 존재하지 않는 FK를 그리지 않습니다. 기존 `shock_event`에는 유사 사례 유형 `category`가, 회원 계정에는 이메일·구글 식별 등 후속 필드가 있습니다.
+
+### 판정 행의 상세
+
+| 컬럼 | 의미 |
+|---|---|
+| region_code·industry_id | 복합 기본키, 지역·업종 마스터 외래키 |
+| verdict_code | red / orange / clear / insufficient |
+| strong_count·on_count | 참고 신호를 뺀 판정 신호 수 |
+| signals_json | 카드가 통째로 읽는 신호·값·백분위·근거·원천. 명시적 역정규화 |
+| computed_at | 판정 산출 시각. 원천 최신일과 별개 |
+| basis | permit / proxy / aggregate. 현행 판정 대상 12업종은 permit |
+
+마스터 시드 18종·UI 선택 14종·판정 12종을 구분합니다. 아래 과거 명세의 “판정 대상 14종”은 당시 상태입니다. 편의점·부동산은 재포함 검증 기준 미달로 현재 판정에서 제외합니다.
+
+## 현재 ORM 테이블 목록
+{: #erd-inventory }
+
+| 모듈 | 수 | 테이블 |
+|---|---:|---|
+| admin | 7 | `access_event` · `access_rule` · `admin_audit` · `admin_session` · `admin_user` · `ip_block` · `security_setting` |
+| agent | 3 | `analysis_report` · `llm_call_event` · `llm_usage` |
+| childcare | 2 | `childcare_center` · `childcare_center_stat` |
+| commerce | 3 | `region_commerce_sales_breakdown` · `region_commerce_sales` · `region_commerce_store` |
+| convenience | 1 | `convenience_store` |
+| funding | 1 | `funding_program` |
+| housing | 1 | `apt_trade_count` |
+| master | 6 | `district` · `industry` · `industry_source_code` · `industry_subcategory` · `population_stat` · `region` |
+| metric | 3 | `region_industry_hour_gap_quarter` · `region_industry_metric` · `region_profile_quarter` |
+| neighborhood | 8 | `region_commerce_change` · `region_facility_quarter` · `region_footfall_quarter` · `region_household_quarter` · `region_housing_average_quarter` · `region_population_quarter` · `region_spending_quarter` · `seoul_commerce_change_baseline` |
+| news | 1 | `news_article` |
+| ops | 1 | `host_metric_sample` |
+| rag | 1 | `rag_chunk` |
+| rent | 1 | `rent_price` |
+| shock | 4 | `interest_rate` · `shock_event_industry` · `shock_event` · `shock_event_region` |
+| store | 2 | `academy_course` · `store` |
+| tobacco | 1 | `tobacco_retailer` |
+| verdict | 1 | `region_industry_verdict` |
+
 ## 1. 전체 관계도
 {: #erd-overview }
 
-키 컬럼(PK·FK·UK)을 중심으로 테이블 간 연결을 표시했다. 전체 컬럼과 설계 근거는 아래 계층별 명세에서 확인할 수 있다. 실선은 DB 외래키 제약, 점선은 애플리케이션 레벨 관계(배치 집계·다형 참조·코드 매핑)다.
+기존 36테이블 도식에 현재 ORM에서 확인한 추가 11개를 반영했다. 키 컬럼(PK·FK·UK)을 중심으로 테이블 간 연결을 표시했다. 전체 컬럼과 설계 근거는 아래 계층별 명세에서 확인할 수 있다. 실선은 DB 외래키 제약, 점선은 애플리케이션 레벨 관계(배치 집계·다형 참조·코드 매핑)다.
 
 <section class="erd-diagram" aria-label="전체 ERD 다이어그램" markdown="1">
 <div class="erd-toolbar">
-  <div class="erd-diagram-label"><span class="erd-live-dot" aria-hidden="true"></span><strong>Schema explorer</strong><span>36 tables</span></div>
+  <div class="erd-diagram-label"><span class="erd-live-dot" aria-hidden="true"></span><strong>Schema explorer</strong><span>47 ORM tables · DB 미재측정</span></div>
   <div class="erd-controls" hidden>
     <button type="button" data-erd-action="out" aria-label="다이어그램 축소" title="축소">−</button>
     <output class="erd-zoom" aria-live="polite" aria-label="다이어그램 배율">100%</output>
@@ -308,11 +364,76 @@ erDiagram
         int id PK
         string analysis_id FK
     }
+    %% 2026-10-01: ORM에서 확인한 추가 테이블. FK 없는 운영 테이블에 관계를 지어내지 않는다.
+    region ||--o{ region_industry_verdict : "판정"
+    industry ||--o{ region_industry_verdict : "판정 업종"
+    district ||--o{ apt_trade_count : "법정동 월 거래"
+    admin_user ||--o{ admin_session : "세션"
+    admin_user |o--o{ access_event : "접속 계정"
+    admin_user |o--o{ admin_audit : "행위자"
+    admin_user |o--o{ ip_block : "등록자"
+    admin_user |o--o{ access_rule : "등록자"
+    admin_user |o--o{ security_setting : "수정자"
+    region_industry_verdict {
+        string region_code PK,FK
+        string industry_id PK,FK
+        string verdict_code
+        int strong_count
+        int on_count
+        text signals_json
+        datetime computed_at
+        string basis
+    }
+    apt_trade_count {
+        string district_code PK,FK
+        string legal_dong PK
+        string deal_ym PK
+        int trade_count
+    }
+    admin_user {
+        int id PK
+        string username UK
+        string email UK
+        string role
+    }
+    admin_session {
+        string token_hash PK
+        int admin_user_id FK
+    }
+    access_event {
+        bigint id PK
+        int admin_user_id FK
+    }
+    admin_audit {
+        bigint id PK
+        int actor_id FK
+    }
+    ip_block {
+        string ip PK
+        int created_by FK
+    }
+    access_rule {
+        int id PK
+        int created_by FK
+    }
+    security_setting {
+        string key PK
+        int updated_by FK
+    }
+    llm_call_event {
+        bigint id PK
+    }
+    host_metric_sample {
+        datetime sampled_at PK
+    }
+
 ```
 
 </div>
 <div class="erd-legend"><span><i class="erd-line" aria-hidden="true"></i> DB 외래키 관계</span><span><i class="erd-line erd-line-dashed" aria-hidden="true"></i> 애플리케이션 관계</span><span class="erd-legend-help">확대 후 스크롤로 탐색 · 상세 컬럼은 아래 명세 참고</span></div>
 </section>
+
+> **과거 요약:** 아래 문단과 적재 표는 2026-09-23 스키마·9/28 적재 기록입니다. 현재 47개 테이블 전체의 관계와 행 수를 설명하는 내용은 아닙니다.
 
 한 줄 요약: **`region`·`district`·`industry`가 모든 엣지가 모이는 허브이고, 서비스 조회는 지도의 `region_industry_metric`·`region_profile_quarter`·`region_commerce_change`, AI 검색의 `rag_chunk`로 모인다.** 원천 테이블은 3NF를 엄격히 지키고, 역정규화는 집계·파생 계층에만 둔다. 서울 상권분석서비스 계열 11테이블이 전체 약 1,159만 행의 86%(약 999만 행)를 차지하고, 인허가 `store`는 09.28 음식 업종 8종 적재로 34.9만 → 88.8만 행이 됐다.
 
@@ -331,6 +452,8 @@ erDiagram
 | 에이전트 | analysis_report 22 · llm_usage 22 |
 
 ---
+
+> **이하 상세 명세는 과거 스냅샷:** 2026-09-23 스키마·9/28 적재 기준입니다. 현재 테이블 개수·판정 범위·계정 기능은 위 현재 코드 보완을 우선합니다.
 
 ## 2. 마스터 계층 — 모든 엣지가 모이는 허브
 {: #erd-master }

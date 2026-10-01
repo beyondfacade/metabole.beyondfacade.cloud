@@ -2,9 +2,9 @@
 title: 메타볼레 (Metabole)
 email: kcs8815@gmail.com
 description: >-
-  상권 데이터 구조화 및 창업 분석 Hybrid RAG용 Agent 개발 프로젝트.
-  서울 상권 공공데이터 기반 전통 변수 8종 × 특이변수 4계층 분석과
-  브이월드 지도 시각화·정책자금 연계를 다루는 문서 사이트.
+  계약 전에 확인하는 서울 동×업종 창업 경고 서비스 메타볼레.
+  실제 사용자 흐름, 업종별 백테스트, 데이터·판정·리포트 구조와
+  설계 선택·검증 한계를 정리한 개발 문서입니다.
 baseurl: ""
 url: "https://metabole.beyondfacade.cloud"
 lang: ko
@@ -32,7 +32,7 @@ aux_links:
   GitHub:
     - "https://github.com/beyondfacade/metabole.beyondfacade.cloud"
 
-footer_content: "팀 BeyondFacade — Metabole 상권 데이터 구조화 및 창업 분석 프로젝트. 본 사이트는 개발 문서 자료입니다."
+footer_content: "팀 Beyond Facade — Metabole 창업 경고 서비스 개발 문서. 경고 없음은 성공·안전·추천을 보장하지 않습니다."
 
 # 개발 일지(jekyll.md)는 크론이 원본을 덮어쓰므로 nav 설정을 defaults로 주입
 defaults:
@@ -44,3 +44,8 @@ defaults:
 exclude:
   - README.md
   - brainstorming.md
+  - docs/
+  - scripts/
+  - CLAUDE.md
+  - Gemfile
+  - Gemfile.lock

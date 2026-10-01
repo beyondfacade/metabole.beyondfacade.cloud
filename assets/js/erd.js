@@ -106,7 +106,7 @@
       entity.dataset.erdLayer = masters.includes(name) ? 'master' : name === 'rag_chunk' ? 'search' : name === 'region_industry_metric' ? 'metric' : 'source';
     });
     svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', '메타볼레 21개 테이블의 데이터 관계도');
+    svg.setAttribute('aria-label', '메타볼레 ORM 47개 테이블의 데이터 관계도. 2026년 10월 1일 코드 기준');
     controls.hidden = false;
     fit();
     new ResizeObserver(() => { if (fitMode) fit(); }).observe(viewport);

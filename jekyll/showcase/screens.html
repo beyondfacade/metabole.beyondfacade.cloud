@@ -1,0 +1,52 @@
+---
+layout: default
+title: 최종 산출물
+permalink: /showcase/screens/
+nav_order: 0.5
+description: 메타볼레의 실제 구현 화면. 조건 입력, 경고 지도, 지원 정보, 자금 계획과 검증 근거를 함께 확인합니다.
+---
+
+<div class="mb-showcase">
+  <header class="mb-showcase-header">
+    <p class="mb-eyebrow">METABOLE / PRODUCT WALKTHROUGH</p>
+    <h1 id="showcase-title" class="no_anchor">최종 산출물<span>화면으로 보는 메타볼레</span></h1>
+    <p class="mb-showcase-lead">“역삼동에 카페, 예산 5천.”<br>창업 조건을 입력하고 경고의 근거를 살펴본 뒤,<br>지원 정보와 자금 준비로 이어지는 과정을 소개합니다.</p>
+    <div class="mb-actions"><a class="mb-button" href="https://beyondfacade.cloud">실제 서비스 열기 <span aria-hidden="true">↗</span></a><a class="mb-text-link" href="{{ '/docs/deliverables/demo-scenario.html' | relative_url }}">발표 시연 순서 <span aria-hidden="true">→</span></a></div>
+    <div class="mb-capture-meta"><span>촬영 <strong>2026.10.01</strong></span><span>환경 <strong>로컬 서비스 · 실백엔드</strong></span><span>화면 <strong>1440 × 1000 · 4장</strong></span></div>
+    <p class="mb-small">최종 발표용 산출물을 모으는 페이지이며 현재 캡처는 10월 1일 구현 상태입니다. 예산 5천만 원은 시연 조건입니다. 화면을 누르면 원본 크기로 볼 수 있습니다.</p>
+  </header>
+
+  <nav class="mb-screen-nav" aria-label="구현 화면 목차"><a href="#entry">01 조건 입력</a><a href="#warning-map">02 경고 지도</a><a href="#support">03 지원 정보</a><a href="#plan">04 자금 계획</a><a href="#evidence">검증·산출물</a></nav>
+
+  <section class="mb-screen-section" aria-labelledby="entry">
+    <div class="mb-screen-heading"><span class="mb-screen-number">01</span><div><p class="mb-eyebrow">START WITH A QUESTION</p><h2 id="entry">한 문장으로 창업 조건을 입력합니다</h2><p>동네·업종·예산을 입력하는 관문입니다. 동 이름이 모호하면 후보를 다시 고르고, 지도에서 직접 시작할 수도 있습니다.</p></div></div>
+    <figure class="mb-screen-figure"><a href="{{ '/assets/images/service-entry.png' | relative_url }}" aria-label="조건 입력 화면 원본 보기"><img src="{{ '/assets/images/service-entry.png' | relative_url }}" width="1440" height="1000" alt="메타볼레 첫 화면. 동네·업종·예산 입력창과 창업 경고 지도 이동 버튼" loading="lazy"></a><figcaption><strong>관문 /</strong> · 입력 전 첫 화면. 예시 질문과 지도 진입 경로를 함께 제공합니다.</figcaption></figure>
+  </section>
+
+  <section class="mb-screen-section" aria-labelledby="warning-map">
+    <div class="mb-screen-heading"><span class="mb-screen-number">02</span><div><p class="mb-eyebrow">READ THE WARNING</p><h2 id="warning-map">지도에서 경고와 근거를 살펴봅니다</h2><p>역삼1동·카페의 조건부 판정과 포화 신호를 확인하는 화면입니다. 판정의 근거·산출일을 읽고 조건에 맞는 다른 업종·동네 후보를 검토합니다.</p></div></div>
+    <figure class="mb-screen-figure"><a href="{{ '/assets/images/service-warning-map.png' | relative_url }}" aria-label="경고 지도 화면 원본 보기"><img src="{{ '/assets/images/service-warning-map.png' | relative_url }}" width="1440" height="1000" alt="역삼1동 카페의 조건부 판정과 포화 신호, 다른 업종과 동네 대안이 표시된 실제 경고 지도" loading="lazy"></a><figcaption><strong>경고 지도 /map</strong> · 역삼1동 × 카페 · 판정 산출일 2026.09.30 · 로컬 API 연동 화면.</figcaption></figure>
+    <p class="mb-screen-note">경고 없음은 성공·안전·추천을 보장하지 않습니다. clear에서는 대안을 조회하지 않고, 다른 상태도 적합 후보가 없으면 표시하지 않습니다. 편의점·부동산중개업은 선택할 수 있지만 판정에서 제외됩니다.</p>
+    <aside class="mb-report-bridge"><div><p class="mb-eyebrow">지도 다음에는</p><h3 id="report-flow">근거를 리포트로 이어 읽습니다</h3><p>판정·이유·유사 사례·조건·대안·지원사업의 6개 절로 설명합니다. 완료된 리포트에 지역 사실이 있을 때 지원 화면으로 이동할 수 있습니다.</p></div><a class="mb-text-link" href="{{ '/docs/requirements/service-platform.html' | relative_url }}">리포트 흐름과 제공 조건 <span aria-hidden="true">↗</span></a></aside>
+  </section>
+
+  <section class="mb-screen-section" aria-labelledby="support">
+    <div class="mb-screen-heading"><span class="mb-screen-number">03</span><div><p class="mb-eyebrow">EXPLORE SUPPORT</p><h2 id="support">지원 후보와 상담 창구를 찾습니다</h2><p>선택한 동네·업종을 이어 받아 대출·보증, 자치구 전용 공고, 창업·경영 지원과 공식 상담 창구를 살펴봅니다.</p></div></div>
+    <figure class="mb-screen-figure"><a href="{{ '/assets/images/service-support.png' | relative_url }}" aria-label="지원 정보 화면 원본 보기"><img src="{{ '/assets/images/service-support.png' | relative_url }}" width="1440" height="1000" alt="역삼1동 카페를 선택한 창업 지원·대출 정보 화면. 참고 금리와 공고 후보 목록" loading="lazy"></a><figcaption><strong>지원 정보 /support</strong> · 역삼1동 × 카페. 공고·금리는 촬영 시점의 표시값입니다.</figcaption></figure>
+    <p class="mb-screen-note">공고는 해당 가능성이 있는 후보입니다. 신청 자격·한도·금리·기간은 원문과 상담에서 확인해야 합니다.</p>
+  </section>
+
+  <section class="mb-screen-section" aria-labelledby="plan">
+    <div class="mb-screen-heading"><span class="mb-screen-number">04</span><div><p class="mb-eyebrow">PREPARE THE NEXT STEP</p><h2 id="plan">필요한 자금을 나누어 준비합니다</h2><p>자기자본·희망대출과 가게 준비 비용, 매출·운영비를 구분해 입력합니다. 비용을 계산한 뒤 필요한 자금과 상담 질문을 정리하는 흐름입니다.</p></div></div>
+    <figure class="mb-screen-figure"><a href="{{ '/assets/images/service-plan.png' | relative_url }}" aria-label="자금 계획 화면 원본 보기"><img src="{{ '/assets/images/service-plan.png' | relative_url }}" width="1440" height="1000" alt="자금 계획의 비용 입력 화면. 자기자본 5천만 원과 참고값이 표시되고 결과 영역은 계산을 기다리는 상태" loading="lazy"></a><figcaption><strong>자금 계획 /plan</strong> · 역삼1동 × 카페 · 자기자본 5천만 원 가정. 계산 전 입력 화면입니다.</figcaption></figure>
+    <p class="mb-screen-note">참고 매출·임대료는 내 가게의 실적이나 견적이 아닙니다. 희망대출은 승인된 자금으로 보지 않으며, 입력을 바꾸면 재계산한 뒤 상담 준비로 넘어갑니다.</p>
+  </section>
+
+  <section class="mb-showcase-evidence" aria-labelledby="evidence">
+    <p class="mb-eyebrow">BEHIND THE SCREENS</p><h2 id="evidence">화면과 함께 확인할 근거</h2>
+    <div class="mb-evidence-summary"><div><h3 id="backtest-summary">카페 백테스트의 두 집단</h3><div class="mb-rate"><span>비추천 <strong>76.8%</strong><small>개업 1,142곳</small></span><span>경고 없음 <strong>38.2%</strong><small>개업 1,680곳</small></span></div></div><p>2022.06.30 시점 판정 후 365일 안에 개업한 점포의 개업 후 1,095일 이내 폐업률입니다. 두 집단의 비율은 2.01배이며 예측 정확도·인과 효과가 아닙니다. 2026.09.29 실험 기록으로, 업종별 차이와 표본의 한계가 있습니다.</p></div>
+    <div class="mb-resource-links"><a href="{{ '/docs/evidence.html' | relative_url }}">검증 결과·해석 한계 <span aria-hidden="true">↗</span></a><a href="{{ '/docs/requirements/architecture.html' | relative_url }}">데이터·판정·설명 구조 <span aria-hidden="true">↗</span></a><a href="{{ '/docs/deliverables.html' | relative_url }}">KDT 프로젝트 산출물 <span aria-hidden="true">↗</span></a><a href="{{ '/docs/deliverables/test-scenario.html' | relative_url }}">테스트 시나리오 <span aria-hidden="true">↗</span></a></div>
+    <p class="mb-small">화면은 기존 로컬 서버에서 직접 촬영했습니다. 리포트 생성과 자금 계산 결과를 이번 촬영에서 새로 실행한 것은 아니며, 화면 공개만으로 운영 배포·전체 기능 검수 완료를 뜻하지 않습니다.</p>
+  </section>
+  <div class="mb-showcase-end"><a class="mb-text-link" href="{{ '/' | relative_url }}">← 메타볼레 소개</a><a class="mb-button" href="https://beyondfacade.cloud">실제 서비스 열기 <span aria-hidden="true">↗</span></a></div>
+</div>

@@ -209,3 +209,36 @@ a, button, input, summary { -webkit-tap-highlight-color: transparent; }
   .hero-intro { display: block; }
   .hero-model { display: none; }
 }
+
+/* 창업 경고 문서: 실제 화면, 사용자 여정, 조건을 동반한 검증 결과. */
+.main-content .hero-title { word-break: keep-all; }
+.landing .hero-lead { max-width: 780px; font-size: 16px; }
+.scope-note { font-size: 13px; line-height: 1.8; color: var(--mb-muted); }
+.service-shot { margin: 32px 0 0; }
+.service-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--mb-line); border-radius: 14px; }
+.service-shot figcaption { margin-top: 12px; font-size: 12px; color: var(--mb-muted); line-height: 1.8; }
+.journey-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 0 !important; list-style: none; }
+.journey-grid > li { margin: 0; padding: 20px; background: var(--mb-surface); border-radius: var(--mb-radius); &::before { display: none; } }
+.step-number { color: var(--mb-blue); font-size: 12px; }
+.main-content .journey-grid h3 { margin: 12px 0; font-size: 16px !important; }
+.journey-grid p { margin: 0; font-size: 13px; }
+.evidence-card { padding: 28px; border: 1px solid var(--mb-line); border-radius: var(--mb-radius); }
+.comparison-row { display: grid; grid-template-columns: 132px minmax(0, 1fr) 64px; gap: 16px; align-items: center; margin: 16px 0; font-size: 14px; }
+.comparison-row > div:first-child span { display: block; font-size: 12px; color: var(--mb-muted); }
+.comparison-track { height: 24px; background: var(--mb-surface); border-radius: 4px; overflow: hidden; }
+.comparison-fill { display: block; height: 100%; border-radius: 4px; &.warning { background: #a25241; } &.neutral { background: #718095; } }
+.evidence-card > p { margin-bottom: 0; font-size: 13px; }
+.decision-list { border-top: 1px solid var(--mb-line); margin-bottom: 24px; }
+.decision-list article { padding: 16px 0; border-bottom: 1px solid var(--mb-line); }
+.main-content .decision-list h3 { margin: 0 0 8px; }
+.decision-list p { margin: 0; font-size: 14px; }
+.history-notice { border-left: 3px solid #799ee9; background: var(--mb-surface); padding: 12px 20px; margin: 20px 0; font-size: 13px; }
+.history-notice p { margin: 0; }
+@media (max-width: 79.99rem) { .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 30rem) {
+  .journey-grid { grid-template-columns: 1fr; }
+  .comparison-row { grid-template-columns: minmax(0, 1fr) 64px; gap: 8px; }
+  .comparison-row > div:first-child { grid-column: 1 / -1; }
+  .evidence-card { padding: 18px; }
+  .hero-actions { flex-wrap: wrap; }
+}
