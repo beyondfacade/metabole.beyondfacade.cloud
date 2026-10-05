@@ -39,6 +39,7 @@ nav_order: 2
 - [개발 범위]({{ '/docs/requirements/dev-scope.html' | relative_url }})
 - [대민 서비스 플랫폼 기능]({{ '/docs/requirements/service-platform.html' | relative_url }})
 - [보안 및 개인정보 보호]({{ '/docs/requirements/security.html' | relative_url }})
+- [모델 평가]({{ '/docs/model-evaluation.html' | relative_url }})
 
 ## [7. 상위 설계서]({{ '/docs/deliverables/high-level-design.html' | relative_url }})
 
