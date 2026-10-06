@@ -2,8 +2,8 @@
 layout: default
 title: 모델 평가
 permalink: /docs/model-evaluation.html
-parent: 6. 요구사항정의서
-nav_order: 5
+parent: 9. 시나리오 테스트
+nav_order: 3
 ---
 
 # 모델 평가 — 임베딩·LLM (2026-10-04 ~ 10-05)
