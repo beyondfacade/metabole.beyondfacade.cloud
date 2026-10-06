@@ -6,38 +6,77 @@ parent: 9. 시나리오 테스트
 nav_order: 3
 ---
 
-# 모델 평가 — 임베딩·LLM (2026-10-04 ~ 10-05)
+# 모델 평가 — 임베딩·LLM
 
-> 질문: 한정된 자원에서 얼마나 가성비 있게 모델을 고를 수 있는가. 오프라인(온프레미스)과 온라인을 같은 잣대로 비교한다.
-> 장비: RTX 5060 Ti 16GB 1장(CPU 실행도 함께 확인). 보안 요구가 있으면 온프레미스로만 돌려야 할 수 있다.
-> 방식: research.remakeday.com/experiments/model-selection 과 같은 순서 — 게이트 먼저, 그다음 품질, 품질이 동률이면 자원(VRAM·지연)이 작은 쪽.
+2026-10-04 ~ 10-07 · RTX 5060 Ti 16GB 1장 · CPU·온라인 API 비교
+{: .scope-note }
+
+**한정된 자원에서 어떤 모델을 선택할까?** 온프레미스 운영 가능성과 품질·자원 효율을 함께 평가했습니다.
 
 ## 1. 요약
 
-| 역할 | 결론 | 근거 한 줄 |
-|---|---|---|
-| RAG 임베딩 | **bge-m3@1024 채택**(운영 전환 완료, v0.65.0) | qwen3@1536과 MRR이 선택 규칙상 동률, GPU 상주 664MB, CPU로도 GPU와 같은 벡터 |
-| 창업 경고 리포트 작성 | **gemini-2.5-flash 기본 유지**. 로컬 단독 운영 불가 | 로컬 6개 모델 모두 엄격 게이트 탈락(가드 적용 후에도) |
-| 의도 관문(자유문 → 동·업종·예산) | **gemini-2.5-flash**. 로컬은 탈락 | 로컬 전부 지어내기 게이트(≤ 0.05) 탈락, Gemini만 통과 |
+<div class="eval-decisions">
+  <article class="eval-decision">
+    <p class="eval-kicker">01 / RAG 임베딩</p>
+    <h3>bge-m3@1024</h3>
+    <span class="eval-badge">채택 · 운영 전환 완료</span>
+    <p class="eval-number">0.940 <small>MRR</small></p>
+    <p>qwen3@1536과 선택 규칙상 동률. 색인·질의를 모델 하나로 처리하고 CPU로도 운영 가능.</p>
+    <a href="#eval-embedding">임베딩 비교 보기 →</a>
+  </article>
+  <article class="eval-decision">
+    <p class="eval-kicker">02 / 창업 경고 리포트</p>
+    <h3>gemini-3.8-flash</h3>
+    <span class="eval-badge">일반 모드 · 운영 1차</span>
+    <p class="eval-number">0 / 6 <small>로컬 게이트 통과</small></p>
+    <p>10/6 외부 API 비교 후 채택. 폴백은 claude-opus-5-5 → gemma4:12b. 로컬 후보는 모두 엄격 기준 미달.</p>
+    <a href="#eval-api">외부 API 비교 보기 →</a>
+  </article>
+  <article class="eval-decision">
+    <p class="eval-kicker">03 / 의도 관문</p>
+    <h3>gemini-2.5-flash</h3>
+    <span class="eval-badge eval-badge-neutral">유지 · 관문 기준 충족</span>
+    <p class="eval-number">98.8% <small>지역·업종 동시 정답</small></p>
+    <p>로컬 후보는 모두 지어내기 허용 기준 초과. 로컬 최고 gemma4:12b도 7.7%로 탈락.</p>
+    <a href="#eval-intent">허용 기준 비교 보기 →</a>
+  </article>
+</div>
 
-핵심 수치:
-
-- 임베딩 MRR — bge-m3@1024 **0.940**, qwen3@1536 **0.935**. 차이 +0.005 [-0.018, +0.028]로 선택 규칙상 동률이다. 성능 동등성이 입증됐다는 뜻은 아니다.
-- 임베딩 API 최고 MRR은 gemini-001@2560·gemini-2@2560의 **0.960**이다. 그래도 기준선 qwen3@1536보다 유의하게 좋은 Gemini 조합은 없었다.
-- bge-m3 CPU 실행 — GPU 벡터와 코사인 최소 **0.99998**, 질의 p95 **149ms**, 전체 재색인 추정 약 **45분**.
-- 리포트 품질(10점 만점, 가드 전) — gemini-2.5-flash **6.67**, gemma4:12b **6.00**, gemma4:e4b **5.42**.
-- 관문 동시 정답 — gemini-2.5-flash **0.988**, 로컬 최고 gemma4:12b **0.887**(지어내기 **0.077**로 게이트 탈락).
-- 코드 가드 적용 후 gemma4:12b 리포트 지어내기 **0.39 → 0.00**.
-- 온도 0 적용 후 Gemini 결론 일치 **0.75 → 1.00**, 문장 유사도 **0.39 → 0.74**. 품질 차이는 유의하지 않았다.
-- 컨테이너 키 주입(v0.67.1) 후 같은 리포트 **129초 → 8초**.
+임베딩·로컬 LLM 평가는 **2026-10-04 ~ 10-05**, 외부 API 해석 비교와 후속 개선은 **10-06 ~ 10-07**입니다. 임베딩 품질은 오프라인 벤치 기준이며, 운영 전환 후 수치는 별도로 구분합니다. 10/5의 리포트 전체 평가와 10/6 이후의 해석 한 단락 평가도 서로 다른 검사입니다.
 
 ## 2. 목적·제약·원칙
+
+<ol class="eval-flow">
+  <li><strong>1. 게이트</strong><span>필수 기준을 통과한 로컬 후보만 남김</span></li>
+  <li><strong>2. 품질</strong><span>역할별 주 지표와 95% 구간 비교</span></li>
+  <li><strong>3. 자원</strong><span>규칙상 동률이면 차원·VRAM·지연 비교</span></li>
+</ol>
+
+<div class="eval-choice">
+  <div><span>임베딩 교체 규칙</span><strong>qwen3@1536 유지</strong><p>기준선보다 유의하게 좋을 때만 교체. MRR 차이 +0.005의 95% 구간은 [−0.018, +0.028].</p></div>
+  <div><span>최종 사용자 결정</span><strong>bge-m3@1024 채택</strong><p>자원 효율, 색인·질의 모델 통일, CPU 운영 가능성을 고려한 선택.</p></div>
+</div>
+
+**동률은 성능 동등성이 입증됐다는 뜻이 아닙니다.** 유의한 차이를 관측하지 못했다는 선택 규칙입니다. API는 온라인 비교군으로 로컬 채택 판정에서 제외했습니다.
+
+**메모리 비교:** bge-m3의 664MB는 VRAM, qwen3의 4.4GB는 RAM입니다. 같은 기준의 CPU 상주 메모리는 각각 1.2GB / 4.4GB이며, 664MB와 4.4GB를 GPU 메모리끼리 비교할 수 없습니다.
+
+<details class="eval-details" markdown="1">
+<summary>자원 제약·판정 규칙·사용자 결정 원문</summary>
+
+평가 순서는 research.remakeday.com/experiments/model-selection 과 같습니다. 게이트 먼저, 그다음 품질, 품질이 동률이면 자원(VRAM·지연)이 작은 쪽입니다. 보안 요구가 있으면 온프레미스로만 돌려야 할 수 있습니다.
 
 ### 자원 제약
 
 - GPU는 RTX 5060 Ti 16GB 한 장이다. 임베딩·리포트 모델·관문 모델이 함께 올라가야 한다.
 - GPU가 없는 서버도 고려해 CPU 실행을 따로 쟀다(AMD Ryzen 5 9600X 6코어, RAM 29GB).
 - 로컬 모델은 토큰 단가가 없다. 전기료·카드 감가는 계산에 넣지 않았다.
+
+### 외부 API를 쓰는 이유
+
+로컬 후보 6개는 가드 후에도 엄격 게이트를 넘지 못했습니다. LLM이 해석 한 단락만 쓰는 코드 우선 구조로 바꾼 뒤에도 gemma4:12b의 핵심 오류는 35/116(30.2%)였습니다. 숫자·추세·신호 뜻을 본문과 다르게 옮기는 오류라, 리포트 해석은 외부 API를 기본으로 쓰고 로컬은 폴백으로 둡니다.
+
+RTX 5060 Ti 16GB 한 장에 임베딩과 리포트 모델이 함께 올라가야 합니다. gemma4:12b와 bge-m3의 동시 상주는 9,790 MiB이고, 관문 e4b까지 올리면 14,661 MiB입니다. 이번 평가 범위는 이 장비에서 함께 실행할 수 있는 후보로 한정했습니다. 더 큰 모델이나 미세조정·증류로 품질을 높이는 방법은 검증하지 않았습니다.
 
 ### 온프레미스 대 온라인
 
@@ -60,7 +99,75 @@ nav_order: 3
   - "위 판정 절의 '현행 유지'는 교체 비용을 고려한 규칙상 결과이고, 자원 제약·온프레미스를 기준으로 한 최종 선택은 bge-m3다."
 - 위 인용문의 메모리 비교는 정정이 필요하다. bge-m3의 664MB는 GPU 상주 메모리(VRAM), qwen3-4b의 4.4GB는 CPU 상주 메모리(RAM)다. CPU 기준으로는 bge-m3 1.2GB와 qwen3-4b 4.4GB를 비교할 수 있다. 표에 qwen3의 GPU 상주값은 따로 없으므로, 664MB와 4.4GB를 GPU 메모리끼리 직접 비교할 수 없다.
 
+</details>
+
 ## 3. 임베딩 평가 (2026-10-04)
+
+<div id="eval-embedding"></div>
+
+**품질 차이가 작아 자원과 운영 방식이 선택을 갈랐습니다.** 로컬 3조합은 규칙상 동률이며, API 최고 MRR은 0.960이지만 기준선보다 유의하게 좋은 Gemini 조합은 없었습니다.
+
+<figure class="eval-chart">
+<figcaption>임베딩 9조합 · MRR은 높을수록 좋음</figcaption>
+<p class="eval-legend">● 로컬　◆ API 비교군 · MRR 축 0.90–1.00 확대 · 오른쪽은 질의 p95</p>
+<div class="eval-mrr-axis" aria-hidden="true"><span>0.90</span><span>0.95</span><span>1.00</span></div>
+<div class="eval-mrr-row">
+  <span>bge-m3@1024<small>로컬 · 채택</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot" style="left:40.0%"></i></span>
+  <strong>0.940<small>p95 111ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>qwen3@1536<small>로컬 · 기준선</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot" style="left:35.0%"></i></span>
+  <strong>0.935<small>p95 89ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>qwen3@2560<small>로컬</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot" style="left:34.0%"></i></span>
+  <strong>0.934<small>p95 89ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-001@1024<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:53.0%"></i></span>
+  <strong>0.953<small>p95 426ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-001@1536<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:57.0%"></i></span>
+  <strong>0.957<small>p95 426ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-001@2560<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:60.0%"></i></span>
+  <strong>0.960<small>p95 426ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-2@1024<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:57.0%"></i></span>
+  <strong>0.957<small>p95 574ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-2@1536<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:59.0%"></i></span>
+  <strong>0.959<small>p95 574ms</small></strong>
+</div>
+<div class="eval-mrr-row">
+  <span>gemini-2@2560<small>API</small></span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-mrr-dot eval-api-dot" style="left:60.0%"></i></span>
+  <strong>0.960<small>p95 574ms</small></strong>
+</div>
+</figure>
+
+<div class="eval-facts">
+  <div><strong>149ms</strong><span>bge-m3 CPU 질의 p95</span></div>
+  <div><strong>0.99998</strong><span>CPU·GPU 벡터 코사인 최소</span></div>
+  <div><strong>약 45분</strong><span>CPU 전체 재색인 추정</span></div>
+</div>
+
+**벤치와 운영은 구분합니다.** 위 MRR은 confirmed 233건·8,891청크·전수 검색 기준입니다. 운영 전환 후에는 8,905건을 재색인했고, HNSW 검색 MRR은 0.930입니다. CPU 동시 부하는 측정하지 않았습니다.
+
+<details class="eval-details" markdown="1">
+<summary>임베딩 상세: 평가셋·전체 결과·hard 유형·CPU·비용·전환 기록</summary>
 
 ### 후보 9조합
 
@@ -179,7 +286,60 @@ Ollama `options.num_gpu=0`으로 CPU에만 올렸다(`ollama ps` PROCESSOR 100% 
 - 운영 평가(confirmed 233) — Hit@5 **0.983** / MRR **0.930**. 전환 전 qwen3 운영은 0.991 / 0.930.
 - 재색인 건수(8,905)는 벤치 코퍼스 스냅샷(8,891)과 다르다. 원자료에 차이의 원인은 적혀 있지 않다.
 
+</details>
+
 ## 4. LLM 평가 (2026-10-05)
+
+<div id="eval-intent"></div>
+
+**로컬 관문은 모두 지어내기 기준에서 탈락했습니다.** 아래는 `missing`·`out_of_scope` 26건 기준이며, null 칸 전체 51건을 분모로 한 참고 지표와 구분합니다.
+
+<figure class="eval-chart">
+<figcaption>관문 지어내기 비율 · 낮을수록 좋음</figcaption>
+<p class="eval-legend">축 0–100% · 점선은 허용 상한 5% · 숫자는 지어내기 비율</p>
+<div class="eval-bar-row">
+  <span>gemma4:12b</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:7.7%"></i><i class="eval-threshold"></i></span>
+  <strong>7.7%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>gemma4:e4b</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:30.8%"></i><i class="eval-threshold"></i></span>
+  <strong>30.8%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>kanana1.5:8b-q4km</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:65.4%"></i><i class="eval-threshold"></i></span>
+  <strong>65.4%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>qwen3.5:9b</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:19.2%"></i><i class="eval-threshold"></i></span>
+  <strong>19.2%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>qwen3.5:4b</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:30.8%"></i><i class="eval-threshold"></i></span>
+  <strong>30.8%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>qwen3.5:2b-q4_K_M</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill " style="width:57.7%"></i><i class="eval-threshold"></i></span>
+  <strong>57.7%<small>✕ 기준 초과</small></strong>
+</div>
+<div class="eval-bar-row">
+  <span>gemini-2.5-flash</span>
+  <span class="eval-bar-track" aria-hidden="true"><i class="eval-bar-fill eval-bar-pass" style="width:0%"></i><i class="eval-threshold"></i></span>
+  <strong>0.0%<small>✓ 기준 충족</small></strong>
+</div>
+</figure>
+
+gemma4:12b의 동시 정답은 **88.7%**, Gemini는 **98.8%**입니다. 12b가 지어낸 2건은 모두 서울 밖 지명을 서울 동으로 바꾼 경우였습니다.
+
+리포트도 **가드 전 로컬 6개 모두 탈락**했습니다. 품질 점수는 Gemini 6.67 / gemma4:12b 6.00 / gemma4:e4b 5.42였지만, 점수만으로 채택할 수 없습니다. 가드 후 게이트별 결과는 다음 절에서 확인할 수 있습니다.
+
+<details class="eval-details" markdown="1">
+<summary>LLM 기준선 상세: 후보·채점·리포트·관문 전체 결과·자원·정정 이력</summary>
 
 ### 두 역할
 
@@ -362,7 +522,54 @@ Ollama `options.num_gpu=0`으로 CPU에만 올렸다(`ollama ps` PROCESSOR 100% 
 - 관문 프롬프트는 2,025~2,078 토큰이라 잘리지 않았다. num_ctx 8192를 줘도 같은 값이었다.
 - Ollama의 `format`은 Gemini 스키마의 `nullable`을 무시한다(문자열 "null"이 관측됨). Ollama용 스키마는 type 합집합(["string","null"])을 쓴다.
 
+</details>
+
 ## 5. 코드 가드 적용 후 재평가 (v0.67.0)
+
+<div id="eval-report-gates"></div>
+
+**가드 후에도 로컬 리포트 단독 운영 기준을 만족하는 모델은 없었습니다.** 12b는 지어내기가 줄었지만 규칙 위반·첫 글자 지연이 남았고, e4b는 지어내기도 기준을 넘었습니다.
+
+<div class="eval-matrix-scroll" role="region" aria-label="가드 후 리포트 게이트 결과" tabindex="0">
+<table class="eval-matrix">
+<caption>가드 후 리포트 · ✓ 통과 / ✕ 미달 · 셀 안에 실측값 표시</caption>
+<thead><tr><th scope="col">모델</th><th scope="col">완주<br>≥ 0.95</th><th scope="col">모순 없음<br>= 1.00</th><th scope="col">지어내기<br>≤ 0.05</th><th scope="col">규칙 위반<br>0건</th><th scope="col">첫 글자 p95<br>≤ 5초</th><th scope="col">완료 p95<br>≤ 60초</th></tr></thead>
+<tbody>
+<tr><th scope="row">gemma4:12b</th><td class="eval-pass"><span>✓ 통과</span><small>1.00</small></td><td class="eval-pass"><span>✓ 통과</span><small>1.00</small></td><td class="eval-pass"><span>✓ 통과</span><small>0.00</small></td><td class="eval-fail"><span>✕ 미달</span><small>12건</small></td><td class="eval-fail"><span>✕ 미달</span><small>9.606초</small></td><td class="eval-pass"><span>✓ 통과</span><small>25.162초</small></td></tr>
+<tr><th scope="row">gemma4:e4b</th><td class="eval-pass"><span>✓ 통과</span><small>1.00</small></td><td class="eval-pass"><span>✓ 통과</span><small>1.00</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.06</small></td><td class="eval-fail"><span>✕ 미달</span><small>12건</small></td><td class="eval-fail"><span>✕ 미달</span><small>12.694초</small></td><td class="eval-pass"><span>✓ 통과</span><small>20.031초</small></td></tr>
+<tr><th scope="row">kanana1.5:8b-q4km</th><td class="eval-fail"><span>✕ 미달</span><small>0.61</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.47</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.64</small></td><td class="eval-fail"><span>✕ 미달</span><small>27건</small></td><td class="eval-fail"><span>✕ 미달</span><small>7.446초</small></td><td class="eval-pass"><span>✓ 통과</span><small>28.639초</small></td></tr>
+<tr><th scope="row">qwen3.5:9b</th><td class="eval-fail"><span>✕ 미달</span><small>0.69</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.64</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.11</small></td><td class="eval-fail"><span>✕ 미달</span><small>15건</small></td><td class="eval-fail"><span>✕ 미달</span><small>6.761초</small></td><td class="eval-pass"><span>✓ 통과</span><small>16.396초</small></td></tr>
+<tr><th scope="row">qwen3.5:4b</th><td class="eval-fail"><span>✕ 미달</span><small>0.61</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.53</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.14</small></td><td class="eval-fail"><span>✕ 미달</span><small>19건</small></td><td class="eval-pass"><span>✓ 통과</span><small>4.465초</small></td><td class="eval-pass"><span>✓ 통과</span><small>12.503초</small></td></tr>
+<tr><th scope="row">exaone3.5:7.8b<small>비상업 라이선스 · 채택 불가</small></th><td class="eval-fail"><span>✕ 미달</span><small>0.78</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.78</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.11</small></td><td class="eval-fail"><span>✕ 미달</span><small>19건</small></td><td class="eval-fail"><span>✕ 미달</span><small>25.558초</small></td><td class="eval-pass"><span>✓ 통과</span><small>44.109초</small></td></tr>
+<tr><th scope="row">gemini-2.5-flash<small>온라인 비교군 · 판정 대상 제외</small></th><td class="eval-fail"><span>✕ 미달</span><small>0.94</small></td><td class="eval-pass"><span>✓ 통과</span><small>1.00</small></td><td class="eval-fail"><span>✕ 미달</span><small>0.06</small></td><td class="eval-fail"><span>✕ 미달</span><small>4건</small></td><td class="eval-pass"><span>✓ 통과</span><small>2.114초</small></td><td class="eval-pass"><span>✓ 통과</span><small>9.402초</small></td></tr>
+</tbody></table>
+</div>
+
+Gemini는 **온라인 비교군**입니다. 위 표의 셀은 같은 기준과 비교한 값이며, 로컬 채택 판정 대상에는 포함하지 않습니다. 가드 후 Gemini도 완주·지어내기·규칙 위반 기준에 미달했습니다.
+
+<figure class="eval-chart">
+<figcaption>gemma4:12b · 가드·프롬프트 변경 전후</figcaption>
+<p class="eval-legend">○ 가드 전　● 가드 후 · 축 0–1</p>
+<div class="eval-dot-row">
+  <span>지어내기 · 낮을수록 좋음</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:0%;width:39%"></i><i class="eval-dot-before" style="left:39%"></i><i class="eval-dot-after" style="left:0%"></i></span>
+  <strong>0.39 → 0.00</strong>
+</div>
+<div class="eval-dot-row">
+  <span>완주 · 높을수록 좋음</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:92%;width:8%"></i><i class="eval-dot-before" style="left:92%"></i><i class="eval-dot-after" style="left:100%"></i></span>
+  <strong>0.92 → 1.00</strong>
+</div>
+</figure>
+
+**해석:** 지어내기 0.39 → 0.00은 프롬프트에서 링크를 빼자 모델이 링크를 쓰지 않은 결과입니다(링크 제거 개입 0회). 규칙 위반은 **12건 → 12건**으로 남았습니다.
+
+**비교 조건:** 가드 후 첫 글자 지연은 판정 절 버퍼링을 포함하므로 가드 전과 직접 비교하지 않습니다. 전후 품질은 판정 세션이 달라 ±0.5 안쪽 차이를 판정자 잡음과 구분할 수 없습니다.
+
+남은 문제는 대안 등급 바꿔 쓰기, 뉴스가 없을 때 문장 지어내기, 꺼진 신호 오독, 예시 금리 옮기기, 추측에도 붙는 기본 신뢰 태그입니다.
+
+<details class="eval-details" markdown="1">
+<summary>가드 상세: 4종 동작·전체 전후 수치·개입 횟수·남은 실패 유형</summary>
 
 화면이 이미 카드로 보여 주는 값(판정 등급·지원사업 원문 링크)을 LLM이 글로 옮기다 틀리는 실패가 많았다. 이것을 코드로 막고 같은 조건(고정 facts 12건, 7개 모델 × 3회, 같은 기준표, 같은 판정 모델)으로 다시 쟀다. 관문은 다시 돌리지 않았다(기준선 캐시 그대로).
 
@@ -445,7 +652,58 @@ Gemini 비용(가드 후): 리포트 1건 평균 입력 14,189 / 출력 1,308 �
 4. Gemini의 "예상 대출 금리 연 4.05%" 1건 — 도구 명세의 예시값(`loan_rate` "예 0.0405")이 원인. 온도 0 단계에서 예시값을 지웠다.
 5. **기본 태그의 위험** — 코드가 붙이는 `[확인된 사실]`은 문단에 뉴스·추측이 섞여도 붙는다. e4b가 판정·이유 문단에 "최근 뉴스에서는 … 긍정적인 신호"를 섞으면 확인된 사실처럼 보인다(비교 판정에서 4건 지적). 그래서 판정자의 신뢰 등급 표기 위반은 크게 줄지 않았다(e4b 6 → 6, 12b 10 → 7).
 
+</details>
+
 ## 6. 온도 0·seed 고정 (v0.67.0)
+
+**일관성은 높아졌고, 유의한 품질 차이는 관측되지 않았습니다.** 고정 사실 12건을 모델별로 3회 반복해 비교했습니다.
+
+<figure class="eval-chart">
+<figcaption>결론 일치 · 높을수록 좋음</figcaption>
+<p class="eval-legend">○ 벤치 기본 설정　● 온도 0 · 축 0–1</p>
+<div class="eval-dot-row">
+  <span>gemini-2.5-flash</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:75%;width:25%"></i><i class="eval-dot-before" style="left:75%"></i><i class="eval-dot-after" style="left:100%"></i></span>
+  <strong>0.75 → 1.00</strong>
+</div>
+<div class="eval-dot-row">
+  <span>gemma4:12b</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:100%;width:0%"></i><i class="eval-dot-before" style="left:100%"></i><i class="eval-dot-after" style="left:100%"></i></span>
+  <strong>1.00 → 1.00</strong>
+</div>
+<div class="eval-dot-row">
+  <span>gemma4:e4b</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:83%;width:17%"></i><i class="eval-dot-before" style="left:83%"></i><i class="eval-dot-after" style="left:100%"></i></span>
+  <strong>0.83 → 1.00</strong>
+</div>
+</figure>
+
+<figure class="eval-chart">
+<figcaption>문장 유사도 · 높을수록 반복 응답이 비슷함</figcaption>
+<p class="eval-legend">○ 벤치 기본 설정　● 온도 0 · 축 0–1</p>
+<div class="eval-dot-row">
+  <span>gemini-2.5-flash</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:39%;width:35%"></i><i class="eval-dot-before" style="left:39%"></i><i class="eval-dot-after" style="left:74%"></i></span>
+  <strong>0.39 → 0.74</strong>
+</div>
+<div class="eval-dot-row">
+  <span>gemma4:12b</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:58%;width:28%"></i><i class="eval-dot-before" style="left:58%"></i><i class="eval-dot-after" style="left:86%"></i></span>
+  <strong>0.58 → 0.86</strong>
+</div>
+<div class="eval-dot-row">
+  <span>gemma4:e4b</span>
+  <span class="eval-dot-track" aria-hidden="true"><i class="eval-dot-line" style="left:40%;width:42%"></i><i class="eval-dot-before" style="left:40%"></i><i class="eval-dot-after" style="left:82%"></i></span>
+  <strong>0.40 → 0.82</strong>
+</div>
+</figure>
+
+**비교 조건:** 이전 값은 로컬 온도 0.3 / Gemini 기본값입니다. 운영 로컬 기본 온도 대비 개선 폭은 측정하지 않았고, 같은 변경에 `loan_rate` 예시값 제거도 포함돼 온도만의 효과로 볼 수 없습니다.
+
+결론 일치 1.00은 반복 회차의 (완주·판정 모순 없음·지어내기 여부)가 같다는 뜻입니다. 정답률이나 본문 전체의 동일성을 뜻하지 않으며, 온도 0도 글자까지 같은 응답을 보장하지 않습니다.
+
+<details class="eval-details" markdown="1">
+<summary>온도 0 상세: 설정·지표 정의·전체 수치·블라인드 품질 비교·해석</summary>
 
 ### 원인
 
@@ -502,19 +760,32 @@ Gemini 비용(가드 후): 리포트 1건 평균 입력 14,189 / 출력 1,308 �
 - 온도 0이어도 완전히 같지는 않다(Ollama·Gemini 모두 결정적이지 않다). 대안 등급이 회차마다 다르게 적히는 경우가 12b 22%, e4b 28% 남았다.
 - 같은 질문에 글자까지 같은 답은 캐시(의도 관문 칸 + 사실 기준월 키)로만 보장된다.
 
+</details>
+
 ## 7. 운영 반영
 
-| 버전 | 날짜 | 내용 |
-|---|---|---|
-| v0.65.0 | 2026-10-04 | 운영 임베딩 qwen3@1536 → bge-m3@1024 전환, 8,905건 재색인 101초 |
-| v0.65.1 | 2026-10-04 | 컨테이너가 `127.0.0.1:11434`로 자기 자신을 가리키던 문제 — `OLLAMA_BASE_URL=http://host.docker.internal:11434`로 호스트 Ollama 접속 |
-| v0.66.1 | 2026-10-05 | 운영 로컬 폴백·운영 점검 프로브에 num_ctx 32,768 — 입력 2,051 → 19,228토큰 |
-| v0.67.0 | 2026-10-05 | 리포트 코드 가드 4종, 온도 0·seed 42 단일 원천, `loan_rate` 예시값 제거 |
-| v0.67.1 | 2026-10-05 | 컨테이너에 `backend/.env` 키 주입(`env_file`, `required: false`) — 8200 컨테이너가 Gemini 키 없이 로컬 12b 단독으로 쓰던 리포트 129초 → 8초 |
+<ol class="eval-timeline">
+<li><div><strong>v0.65.0</strong><time datetime="2026-10-04">2026-10-04</time></div><p>운영 임베딩 qwen3@1536 → bge-m3@1024 전환, 8,905건 재색인 101초</p></li>
+<li><div><strong>v0.65.1</strong><time datetime="2026-10-04">2026-10-04</time></div><p>컨테이너가 <code>127.0.0.1:11434</code>로 자기 자신을 가리키던 문제 — <code>OLLAMA_BASE_URL=http://host.docker.internal:11434</code>로 호스트 Ollama 접속</p></li>
+<li><div><strong>v0.66.1</strong><time datetime="2026-10-05">2026-10-05</time></div><p>운영 로컬 폴백·운영 점검 프로브에 num_ctx 32,768 — 입력 2,051 → 19,228토큰</p></li>
+<li><div><strong>v0.67.0</strong><time datetime="2026-10-05">2026-10-05</time></div><p>리포트 코드 가드 4종, 온도 0·seed 42 단일 원천, <code>loan_rate</code> 예시값 제거</p></li>
+<li><div><strong>v0.67.1</strong><time datetime="2026-10-05">2026-10-05</time></div><p>컨테이너에 <code>backend/.env</code> 키 주입(<code>env_file</code>, <code>required: false</code>) — 8200 컨테이너가 Gemini 키 없이 로컬 12b 단독으로 쓰던 리포트 129초 → 8초</p></li>
+<li><div><strong>v0.68.0~v0.71.2</strong><time datetime="2026-10-06">2026-10-05~06</time></div><p>판정·수치·직접 답·근거는 코드가 쓰고, LLM은 해석 한 단락만 작성. 질문 유형별 직접 답과 위험 등급 표기 반영</p></li>
+<li><div><strong>v0.73.0</strong><time datetime="2026-10-06">2026-10-06</time></div><p>리포트 해석 1차를 claude-opus-5-5로 변경. 이후 같은 평가셋에 Gemini 3.8 Flash를 추가 비교</p></li>
+<li><div><strong>v0.75.0</strong><time datetime="2026-10-06">2026-10-06</time></div><p>1차 gemini-3.8-flash 일반 → 폴백 claude-opus-5-5 → gemma4:12b. 해석 가드 재시도는 Opus, 실패 시 로컬</p></li>
+<li><div><strong>v0.76.0~v0.78.0</strong><time datetime="2026-10-06">2026-10-06</time></div><p>해석 말투·동 이름 표기, 매출 중앙값 비교·시간대 매출 가드·판정 신호 구분 반영</p></li>
+<li><div><strong>v0.83.0~v0.86.0</strong><time datetime="2026-10-06">2026-10-06</time></div><p>이용조건에 따라 뉴스·상권 축소 신호를 해석 입력에서 제거하고, 지역 사건을 조건 절에 연결</p></li>
+<li><div><strong>v0.87.0</strong><time datetime="2026-10-07">2026-10-07</time></div><p>안정적인 경고 신호가 없는 7개 업종은 판정 근거 약함을 표시하고 최대 조건부. 함께 시험한 조기 폐업 오독 가드는 미적용</p></li>
+</ol>
 
 - v0.67.1 이전 8200 컨테이너는 줄곧 로컬 gemma4:12b 단독으로 리포트를 썼다(1건 약 2분). 구글 로그인 버튼도 숨겨져 있었다.
 
 ## 8. 한계
+
+**주요 한계:** 10/5 리포트 전체 평가는 12시나리오, 이후 해석 평가는 150건 중 LLM을 호출한 116건입니다. 품질 판정자도 LLM이고 판정 묶음에 따라 오류 건수가 흔들립니다. CPU 동시 부하와 실제 도구 호출 능력은 검증되지 않았습니다. 비교 조건에 관한 주의사항은 각 그래프 옆에도 표시했습니다.
+
+<details class="eval-details" markdown="1">
+<summary>임베딩·LLM 평가의 전체 한계</summary>
 
 임베딩:
 
@@ -539,16 +810,21 @@ LLM:
 - e4b의 VRAM은 `size_vram`(3,158 MiB)보다 실제 점유(nvidia-smi 차이 4,871 MiB)가 크다.
 - kanana1.5 라이선스는 모델 카드로만 확인했다. 실제로 쓰기 전에 원문 LICENSE 파일을 확인해야 한다.
 
+</details>
+
 ## 9. 다음 단계
 
-- **리포트 구조 변경** — 결론(판정·수치·대안·지원사업)은 코드가 렌더링하고, LLM은 절별 짧은 해석만 쓴다(온도 0). 같은 질문은 캐시(관문 칸 + 사실 기준월 키)로 같은 답을 준다. 대안 등급 바꿔 쓰기, 첫 글자 지연(12b p95 9.6초, 게이트 5초), 남은 일관성 흔들림을 함께 해결하려는 것이다. 운영 SSE·프론트 영향이 있어 설계 승인을 먼저 받는다.
-- 같은 방식의 가드 후보 — 대안 절에도 등급 단정 검사 적용, 뉴스가 비면 [참고 신호] 문장 금지, 뉴스·검색 언급 문단에는 기본 태그를 붙이지 않기.
+- **코드 우선 구조는 반영 완료** — 판정·수치·직접 답·근거는 코드가 쓰고 LLM은 해석 한 단락만 쓴다(v0.68.0~). 같은 질문 캐시는 미구현 과제로 남아 있다.
+- **남은 해석 오류** — 조기 폐업을 새 점포의 생존으로 풀이하는 오류, 시간대 자료 부족을 일반론으로 메우는 오류, 경고 없음을 긍정으로 읽는 해석. 조기 폐업 문장 삭제 가드는 맞는 근거까지 지워 미적용했다(§11).
 - **관문 로컬 폴백** — 서울 밖 지명을 서울 동으로 바꾸는 문제를 고친 뒤(규칙 쪽 차단이나 지시문 보강) 다시 잰다.
 - **온프레미스용 캐시·증류 검토** — 로컬 단독 운영이 필요해질 경우, 결론을 코드로 옮겨 LLM 부담을 줄이고 캐시로 반복 호출을 없앤다. 그래도 부족하면 Gemini 출력으로 로컬 모델을 맞추는 증류를 검토한다.
 - 로컬로 넘어가기 전에는 프롬프트·형식 작업(신뢰 등급 태그 규칙, 공고 번호·URL 처리)을 먼저 하고 다시 잰다.
 - API 임베딩 경로를 쓰게 되면 gemini-embedding-2@1024를 검토한다(001 단종 일정).
 
 ## 10. 원자료 위치
+
+<details class="eval-details" markdown="1">
+<summary>평가 결과·설계·코드·개정 이력 경로</summary>
 
 | 내용 | 경로 |
 |---|---|
@@ -562,3 +838,254 @@ LLM:
 | LLM 평가 설계 | `docs/superpowers/specs/2026-10-04-llm-benchmark-design.md` |
 | 코드 가드·샘플링 | `backend/apps/agent/domain/services/report_guards.py`, `backend/apps/agent/domain/services/report_sampling.py` |
 | 개정 이력 | `backend/docs/backend_ver_log.md` |
+
+</details>
+
+
+## 11. 외부 API 해석 모델 비교와 후속 개선
+{: #eval-api }
+
+코드 우선 구조에서 LLM은 해석 한 단락만 씁니다. 평가셋 150건 중 자료 부족으로 LLM을 부르지 않은 34건을 제외한 **116건**을 비교했습니다. 10/6 비교를 거쳐 **gemini-3.8-flash 일반 모드**를 운영 1차로 채택했습니다.
+
+| 모델 | 핵심 오류 | 95% 구간 | p95 | 건당 비용 추정 |
+|---|---|---|---|---|
+| claude-opus-5-5 | 5/116 (4.3%) | 1.9%~9.7% | 8.6초 | $0.0217 |
+| **gemini-3.8-flash 일반** | **8/116 (6.9%)** | 3.5%~13.0% | **5.5초** | **$0.0022** |
+| gemini-3.8-flash 추론 | 5/116 (4.3%) | 1.9%~9.7% | 12.0초 | $0.0022 + 미기록 추론 토큰 |
+| gemini-2.5-flash | 19/115 (16.5%) | 10.8%~24.4% | 4.5초 | $0.0010 |
+
+이 표는 **3단계 모델 선택 비교**입니다. 오류율 구간이 겹쳐 성능 동등성이 입증된 것은 아니지만, 당시 벤치 비용·지연과 사람 검수 4차를 함께 고려해 3.8 일반을 선택했습니다. 비용은 당시 사용량·단가로 추정한 값이며 추론 모드는 하한입니다.
+
+### 개선 적용과 미적용
+
+아래 수치는 각 단계의 해석 핵심 오류 건수입니다. 운영 두 모델을 같은 평가셋에서 비교했으며 판정자 변동은 약 ±3건입니다.
+
+| 단계 | 변경 | 3.8 일반 | Opus | 결정 |
+|---|---|---|---|---|
+| 4 | 해석 말투 규칙 | 8 → 4 | 5 → 4 | 적용 |
+| 5 | 한국어 윤문 규칙 | 4 → 10 (축소판 12) | 4 → 2 (축소판 4) | 미적용 |
+| 6 | 시간대 매출 자료 없음을 사실 문장으로 명시 | 4 → 7 | 4 → 5 | 미적용 |
+| 7 | 동 이름은 본문 표기 그대로 | 4 → 3 | 4 → 5 | 적용 |
+| 8 | 매출 중앙값 비교·시간대 가드·판정 신호 구분 | 3 → 4 | 5 → 1 | 적용 |
+| 9 | 상권변화지표 뜻풀이·시간대 낱말 가드 | 4 → 5 | 1 → 5 | 미적용 |
+| 10 | 시간대 자료가 없으면 사람 흐름을 해석 입력에서 제거 | 4 → 6 | 1 → 6 | 미적용 |
+| 11 | 뉴스·상권 축소 신호 제거 | 4 → 9 | 1 → 4 | 이용조건에 따라 적용 |
+| 12 | 조건 절에 지역 사건 연결 | 9 → 3 | 4 → 2 | 적용 |
+| 13 | 판정 근거 약함 표시 + 조기 폐업 오독 가드 | 3 → 5 | 2 → 4 | 근거 약함만 적용, 가드 미적용 |
+
+**13단계는 두 변경을 함께 시험한 결과입니다.** 5/116·4/116을 가드를 제외한 최종 운영판의 오류율로 읽으면 안 됩니다. 7개 업종의 판정 근거 약함 표시는 제품 결정으로 적용했지만, 조기 폐업 가드는 올바른 근거 문장까지 지워 적용하지 않았습니다.
+
+지시문을 늘리거나 뜻풀이를 붙여도 해석 오류가 줄지는 않았습니다. 실제 반영은 코드가 쓰는 사실 문장과 가드, 사람 검수로 확인한 말투·표기 변경을 중심으로 진행했습니다. 시간대 추정·신호 사이 인과·조기 폐업 오독은 남은 한계입니다.
+
+<details class="eval-details" markdown="1">
+<summary>1~13단계의 전체 비교 조건·오류 사례·결정</summary>
+
+코드 우선 구조(v0.68.0~)에서 LLM은 리포트 맨 위 해석 한 단락만 쓴다. 외부 API 후보를 같은 150건 평가셋으로 비교했다. 코드는 v0.71.2(폐업률·점포 수 해마다), 판정은 opus 블라인드(기준표 `data/eval/report_answer_rubric.md` v2), 자료 부족 34건은 LLM을 부르지 않아 제외했다.
+
+### 1단계 — 표본 20건으로 Claude 모델 고르기
+
+| 모델 | 요청 설정 | 핵심 오류 | 건당 비용(추정) | p50 / p95 |
+|---|---|---|---|---|
+| claude-haiku-4-5 | 온도 0 | 10/20 | $0.0045 | 3.4 / 4.4초 |
+| claude-sonnet-5-5 | 생각 끔(`between_tools`) | 4/20 | $0.0103 | 4.4 / 5.4초 |
+| **claude-opus-5-5** | effort low(생각을 끌 수 없다) | **2/20** | $0.0222 | 5.7 / 9.1초 |
+| gemini-2.5-flash | 생각 끔·온도 0 | 2/19 | $0.0010 | 4.0 / 4.3초 |
+
+### 2단계 — 전체 116건, 같은 묶음에 세 해석
+
+| 모델 | 핵심 오류 | 95% 구간 | p50 / p95 | 건당 비용(추정) |
+|---|---|---|---|---|
+| **claude-opus-5-5** | **2/116 (1.7%)** | 0.5%~6.1% | 5.7 / 8.6초 | $0.0217 |
+| gemini-2.5-flash | 19/115 (16.5%) | 10.8%~24.4% | 4.0 / 4.5초 | $0.0010 |
+| gemma4:12b(로컬) | 35/116 (30.2%) | 22.6%~39.1% | 3.7 / 4.6초 | — |
+
+- 짝 비교(115건): Opus만 오류 2건, Gemini만 오류 19건. 결정: 운영 1차를 Opus로(v0.73.0, §7).
+- 비용은 usage × 공시 단가 추정(Opus $4/$20, Gemini 2.5 Flash $0.30/$2.50, 1M 토큰당). Opus는 Gemini의 약 22배다.
+### 3단계 — Gemini 3.8 Flash 일반·추론 모드 (같은 116건, 한 묶음에 네 해석)
+
+| 모델 | 핵심 오류 | 95% 구간 | p50 / p95 | 건당 비용(추정) |
+|---|---|---|---|---|
+| claude-opus-5-5 | 5/116 (4.3%) | 1.9%~9.7% | 5.7 / 8.6초 | $0.0217 |
+| **gemini-3.8-flash 일반**(사전 추론 끔) | **8/116 (6.9%)** | 3.5%~13.0% | 4.1 / 5.5초 | **$0.0022** |
+| gemini-3.8-flash 추론(사전 추론 켬) | 5/116 (4.3%) | 1.9%~9.7% | 8.4 / 12.0초 | $0.0022 + 추론 토큰(미기록) |
+| gemini-2.5-flash | 19/115 (16.5%) | 10.8%~24.4% | 4.0 / 4.5초 | $0.0010 |
+
+- 짝 비교: 3.8 일반 vs 2.5 — 3.8만 오류 8, 2.5만 오류 19. 3.8 일반 vs 오퍼스 — 3.8만 8, 오퍼스만 5(구간 겹침). 3.8 추론 vs 오퍼스 — 5 대 5.
+- 숫자 가드가 지운 문장: 3.8 일반·추론 0 · 오퍼스 4 · 2.5 26 — 3.8은 숫자 금지 규칙을 지킨다.
+- 같은 오퍼스가 2단계(묶음당 3개)에선 2건, 여기(4개)선 5건 — 판정 묶음 구성에 따라 ±3건쯤 흔들린다.
+- 남은 오류 유형(세 모델 공통): 시간대 자료가 부족한데 업종 일반 특성으로 메움(e022·e028·e029·e075), 등급 낱말 한 단계 과장("낮은 편"→"매우 낮은", e013·e073).
+- **결정(사용자, v0.75.0)**: 1차 gemini-3.8-flash 일반 모드 → 폴백 claude-opus-5-5 → 로컬 gemma4:12b. 오류율의 95% 구간이 오퍼스와 겹치고, 당시 벤치 비용은 약 1/10이며 더 빠르다. 구간 겹침은 성능 동등성이 입증됐다는 뜻이 아니다. 추론 모드는 핵심 오류 5/116으로 오퍼스와 건수가 같지만 가장 느려(p95 12초) 쓰지 않는다.
+- 단가(확인 2026-10-06, https://ai.google.dev/gemini-api/docs/pricing): 3.8 Flash 입력 $0.75 · 출력 $3.75(추론 토큰 포함, 1M당). 벤치 사용량 기록에 추론 토큰이 빠져 있어 추론 모드 비용은 하한이다.
+
+### 4단계 — 해석 말투 규칙(v0.76.0) 전후, 운영 두 모델
+
+사람 검수 4차에서 "답변이 사용자에게 친절하지 않다"는 의견이 나와 [말투] 규칙(중고등학생 눈높이, 전문 용어 풀어 쓰기, 짧은 문장, 유치한 표현 금지)을 넣고 같은 116건을 다시 쟀다(태그 `persona150`, 묶음당 두 해석).
+
+| 모델 | 핵심 오류 전 → 후 | 평균 길이 | 문장 평균 길이 | p95 |
+|---|---|---|---|---|
+| gemini-3.8-flash 일반 | 8 (6.9%) → **4 (3.4%)** | 301 → 255자 | 60 → 51자 | 5.5 → 5.9초 |
+| claude-opus-5-5 | 5 (4.3%) → **4 (3.4%)** | 382 → 315자 | 57 → 45자 | 8.6 → 7.4초 |
+
+- 짝 비교: 3.8은 전에만 오류 7 · 후에만 3, 오퍼스는 4 · 3. 쉽게 쓰라고 해도 사실 오류가 늘지 않았다.
+- 오퍼스는 "즉 ~라는 뜻입니다"로 풀어 쓴 해석이 8 → 93건, 3.8은 용어 앞에서 뜻을 먼저 풀고 용어를 붙이는 식("문 닫는 곳이 훨씬 많은 순유출 상태")이다.
+- 남은 오류: 시간대 자료 부족을 업종 일반론으로 메움(e066·e084·e114), 본문에 없는 평가("안정적", "매출 수준이 낮다").
+
+### 5단계 — 한국어 윤문 규칙(im-not-ai quick-rules 발췌) 시험, 미적용
+
+[말투] 위에 [문장 다듬기] 규칙(번역투·AI 관용구·같은 완곡 표현 반복·문두 접속사·형식명사 끝맺음)을 더해 같은 116건을 쟀다(태그 `polish150`, 브랜치 `feat/answer-polish` v0.77.0, 미머지).
+
+| 모델 | 핵심 오류 말투만 → +윤문 | 짝 비교(말투만에만 / +윤문에만) | 문두 접속사 |
+|---|---|---|---|
+| gemini-3.8-flash 일반(기본) | 4 (3.4%) → **10 (8.6%)** | 4 / 10 | 72 → 41 |
+| claude-opus-5-5 | 4 (3.4%) → 2 (1.7%) | 4 / 2 | 20 → 4 |
+
+- 문장은 깔끔해졌지만 **기본 모델(3.8)의 사실 오류가 늘었다** — 새로 생긴 오류는 본문에 없는 평가·추정을 단정한 것("점포 평균 매출 수준도 높지 않다", "점심 장사에 어울립니다", "카드 결제 외 매출이 많아"를 가능성 아닌 사실로). 완곡 표현·접속사를 줄이라는 규칙이 3.8을 단정 쪽으로 민 것으로 보인다.
+- 오퍼스는 오히려 줄었다(4 → 2). 같은 규칙이 모델에 따라 반대로 작용했다.
+- 단정 쪽으로 민다고 본 두 규칙(완곡 표현 반복·문두 접속사)을 빼고 번역투·AI 관용구·형식명사 끝맺음만 남겨 다시 쟀다(태그 `polish2-150`): 3.8 **12/116 (10.3%)**(짝 비교 말투만에만 3 · 줄인 윤문에만 11), 오퍼스 4/116(4 · 4). 줄여도 3.8 오류가 줄지 않았다 — 새 오류는 대부분 "시간대 매출 자료 부족인데 유동인구로 매출·장사 시간을 추정"과 "본문에 없는 평가(평균 매출이 높지 않다)"였다. 규칙 내용보다 지시문이 길어지는 것 자체가 3.8의 근거 지키기를 흐리게 하는 것으로 보인다.
+- 결정: 두 번 모두 기본 모델 오류가 늘어 **운영에 넣지 않았다**(말투 규칙 v0.76.0까지만 운영). 번역투·AI 관용구는 말투 규칙만으로도 이미 0건이다. 브랜치 `feat/answer-polish`는 기록으로 남기고 머지하지 않는다.
+- 모델별 지시문(Gemini는 말투만, 오퍼스는 말투+윤문)도 검토했으나 넣지 않았다(사용자 결정 2026-10-06) — 오퍼스는 폴백이라 실제로 쓰는 리포트가 1% 안팎(운영 기록 약 130건 중 폴백 1건)이고, 오퍼스 4 → 2건 개선은 판정 오차(±3건) 안이다. 오퍼스 사용이 늘거나 반복 측정으로 개선이 확인되면 다시 본다.
+
+### 6단계 — 시간대 매출 자료 없음을 코드 문장으로 명시, 미적용
+
+남은 오류 중 가장 많은 "시간대 매출 자료가 없는데 유동인구로 매출·장사 시간을 추정"을 지시문이 아니라 코드가 쓰는 사실 문장으로 막아 봤다(태그 `hours150`, 브랜치 `feat/hour-gap-missing`, 미머지). 시간대 자료 부족 줄 끝에 "이 업종이 어느 시간대에 매출을 내는지는 알 수 없습니다", 사람 흐름 줄에 "(동 전체 유동인구, 업종 매출과 다름)".
+
+| 모델 | 핵심 오류 말투만(운영) → +시간대 명시 | 그중 시간대 관련 | 짝 비교(전에만 / 후에만) |
+|---|---|---|---|
+| gemini-3.8-flash 일반 | 4 → 7 | 3 → 2 | 4 / 7 |
+| claude-opus-5-5 | 4 → 5 | 2 → 4 | 3 / 4 |
+
+- 시간대 관련 오류가 줄지 않았다. 오퍼스는 "자료 없음"을 읽고도 "술집은 밤 장사"처럼 업종 상식으로 메웠다 — 사실 문장으로는 업종 일반론을 막지 못한다.
+- 결정: 오류가 늘어 **운영에 넣지 않았다**.
+- 부수 발견: 숫자 금지 규칙 때문에 동 이름 속 숫자를 한글로 풀어 쓴다("이태원제일동", "답십리제두동") — 3.8은 매 회차 116건 중 약 11건. 대부분 뜻은 통하지만 "제두동"처럼 없는 지명이 되면 오류로 잡힌다. 숫자 가드는 이미 동 이름을 검사에서 빼므로(v0.68.0) 지시문에서 "동 이름은 본문 표기 그대로"를 허용하는 것이 다음 후보다.
+
+### 7단계 — 동 이름은 본문 표기 그대로(v0.76.1, 적용)
+
+6단계에서 찾은 "숫자 금지 때문에 동 이름을 한글로 풀어 씀"을 고쳤다 — 숫자 금지 규칙에 "동 이름은 본문에 적힌 그대로 쓴다(예: 역삼1동)" 예외 한 줄(태그 `dong150`).
+
+| 모델 | 동 이름 한글 풀이 | 숫자 가드가 지운 문장 | 핵심 오류 말투만 → +예외 | 짝 비교(전에만 / 후에만) |
+|---|---|---|---|---|
+| gemini-3.8-flash 일반 | 11 → **0** | 0 → 0 | 4 → **3** | 3 / 2 |
+| claude-opus-5-5 | 4 → **0** | 6 → 4 | 4 → 5 | 4 / 5 |
+
+- 목표(없는 지명 방지)를 이뤘고 기본 모델 오류가 늘지 않아 운영에 넣었다(main 머지·8200 재빌드).
+- 남은 오류: 본문에 없는 평가("평균 매출이 낮은 편"), 시간대 자료 부족을 동 흐름으로 메움, "경고 없음"을 자료 공백 탓으로 돌림.
+
+### 8단계 — 남은 오류 3유형을 코드로 막기(v0.78.0)
+
+7단계 뒤 남은 오류를 유형별로 지시문이 아니라 코드(사실 문장·가드)로 막았다(태그 `fix150`). 평가셋 facts 116건에는 매출 근거의 서울 중앙값만 다시 채웠다(`freeze --augment`, 다른 값 변화 없음).
+
+| 유형 | 고친 방식 |
+|---|---|
+| 본문에 없는 매출 평가("평균 매출이 낮은 편") | 매출 줄에 서울 같은 업종 동 중앙값과 견준 등급을 코드가 붙임 |
+| 시간대 매출 자료가 없는데 사람 흐름으로 매출 시간 추정 | 자료가 없으면 시간대 낱말+매출·장사 문장을 지우는 가드(모른다고 밝힌 문장은 남김) |
+| "경고 없음"을 자료 공백 탓으로 설명 | 판정 줄을 켜짐 / 계산했지만 기준 안 넘음(이름) / 자료 부족(이름)으로 나눔 |
+
+| 모델 | 핵심 오류 7단계 → 8단계 | 짝 비교(전에만 / 후에만) | 가드가 지운 문장 |
+|---|---|---|---|
+| gemini-3.8-flash 일반 | 3 → 4 | 3 / 4 | 5 |
+| claude-opus-5-5 | 5 → 1 | 5 / 1 | 4 |
+
+- 7단계 3.8 오류 3건 중 매출 평가 2건(e064·e100)은 사라졌다. 8단계 3.8 오류 4건은 시간대 이름을 바꿔 옮김(e038, 매출 낱말이 없어 가드 밖), 상권변화지표 반대로 읽음, 없는 자료를 추정, 본문에 없는 판단 — 겨냥한 세 유형은 0건이다. +1은 판정 오차(±3) 안이다.
+- 해석 속 "경고 없음… 자료가 비어서" 인과 표현(키워드 집계): 3.8 3 → 1, 오퍼스 6 → 1.
+
+### 9단계 — 상권변화지표 쉬운 뜻·본문에 없는 시간대 낱말 가드, 미적용
+
+8단계 뒤 남은 오류 중 "상권확장을 침체로 읽음"(e082)과 "밤을 저녁·주말로 바꿔 옮김"(e038)을 코드로 막아 봤다(태그 `fix2-150`, 브랜치 `feat/answer-fixes-2`, 미머지).
+상권변화지표 이름 뒤에 쉬운 뜻(예: "정체(영업 중·폐업 점포 모두 서울보다 오래 영업 — 오래된 가게 위주로 변화가 적은 쪽)")을 붙이고, 해석에 본문에 없는 시간대 낱말(저녁·점심·퇴근 등)이 나오면 그 문장을 지웠다.
+
+| 모델 | 핵심 오류 8단계 → 9단계 | 짝 비교(전에만 / 후에만) |
+|---|---|---|
+| gemini-3.8-flash 일반 | 4 → 5 | 4 / 5 |
+| claude-opus-5-5 | 1 → 5 | 1 / 5 |
+
+- 쉬운 뜻이 새 오류를 낳았다: "오래된 가게 위주"를 읽고 "상권이 굳어 새로 들어가기 어렵다"를 덧붙였다(3.8 e001·e016). 뜻풀이도 해석의 재료가 된다.
+- 오퍼스 오류 5건 중 4건은 시간대 매출 자료가 없는데 "저녁 손님이 많다"처럼 **손님**으로 매출 시간을 메운 것 — 본문에 있는 시간대(저녁) 낱말이라 새 가드 밖이고, 8단계 시간대 매출 가드는 "손님"을 넣으면 지나치게 지워 뺐다.
+- 결정: 오류가 늘어 **운영에 넣지 않았다**. 8단계 오퍼스 1건은 판정 오차 쪽으로 낮게 나온 값으로 본다.
+
+### 10단계 — 시간대 매출을 모르면 해석 입력에서 사람 흐름 빼기, 미적용
+
+9단계 뒤 가장 많이 남은 오류는 시간대 매출 자료가 없는데 본문의 "사람 흐름: 가장 많은 때 저녁"을 "저녁 손님이 많다"로 옮기는 것이었다. 원인을 없애려고, 시간대 매출 자료가 없을 때 **모델에 주는 입력에서만** 사람 흐름 구절을 뺐다(화면 본문은 그대로, 태그 `flow150`, 브랜치 `feat/hour-flow-input`, 미머지).
+
+| 모델 | 핵심 오류 8단계 → 10단계 | 그중 시간대 관련 | 짝 비교(전에만 / 후에만) |
+|---|---|---|---|
+| gemini-3.8-flash 일반 | 4 → 6 | 1 → 4 | 2 / 4 |
+| claude-opus-5-5 | 1 → 6 | 1 → 4 | 0 / 5 |
+
+- 새 오류 유형이 생겼다: 입력에 사람 흐름이 없으니 "사람이 언제 많은지는 자료가 부족하다"고 썼는데, 화면 본문에는 사람 흐름이 있어 **본문과 어긋난다**(e038·e082·e104). 모델 입력과 화면이 다르면 그 차이가 오류가 된다.
+- 결정: 오류가 늘어 **운영에 넣지 않았다**.
+- 시간대 매출 오류에 대해 지금까지 시도한 세 방법 — 사실 문장 추가(6단계), 시간대 낱말 가드(9단계), 입력에서 빼기(10단계) — 모두 오류를 늘렸다. 8단계(v0.78.0)의 시간대 매출 가드("시간대 낱말 + 매출·장사")까지가 효과가 확인된 선이다. 남은 "저녁 손님" 유형은 판정 오차 수준(116건 중 1건 안팎)이라 더 손대지 않는다.
+
+### 11단계 — 뉴스를 본문(해석 입력)에서 빼기·상권 축소 신호 제거(v0.83.0, 이용조건상 필수)
+
+네이버 검색 API 특약(AI 입력 금지)에 따라 리포트 본문에서 뉴스 줄과 유사 사례의 뉴스 건수 문장을 빼고, 해석 지시문의 뉴스 규칙 한 줄도 뺐다. 같은 때 판정 신호 "상권 축소"가 빠져 왜 안 되나 절의 참고 신호 줄도 없어졌다(태그 `news150`, 브랜치 `feat/news-compliance`).
+
+| 모델 | 핵심 오류 8단계(fix150) → 11단계 | 짝 비교(전에만 / 후에만) |
+|---|---|---|
+| gemini-3.8-flash 일반 | 4 → 9 | 4 / 9 |
+| claude-opus-5-5 | 1 → 4 | 1 / 4 |
+
+- 겹치는 오류 시나리오가 하나도 없다. 해석 글이 크게 바뀌었고(같은 시나리오끼리 유사도 0.4~0.8, 글자까지 같은 것 150건 중 34건 — 대부분 LLM을 안 부르는 자료 부족 시나리오) 판정자 기준도 흔들렸다.
+- 3.8의 9건 중 4건(e024·e045·e050·e111)과 오퍼스 1건(e141)이 "조기 폐업(문 닫은 점포의 영업 기간)을 새로 연 점포의 생존율로 풀이" 유형이다. 8단계 판정자는 같은 유형을 핵심 오류로 보지 않았다(e141 오퍼스 메모). 이 유형을 빼면 3.8 4 → 5, 오퍼스 1 → 3으로 판정 오차(±3) 안이다.
+- 나머지는 본문에 없는 인과(e046·e048 "많아서 조기 폐업", e039 원인 설명)·시간대 옮김(e015·e077·e078)·자료 부족을 추정으로 메움(e058)이다.
+- 결정: 이용조건상 되돌릴 수 없는 변경이라 **적용**한다. 조기 폐업 오독은 다음 개선 후보(코드 가드나 본문 정의 문장).
+
+### 12단계 — 지역 사건 줄을 조건 절에 넣기(v0.86.0, 적용)
+
+조건 절에 "[확인된 사실] ○○동 지역 사건(최근 3년, 서울 열린데이터광장): 2025-08 … (출처: OA-xxxxx)" 줄을 넣었다(정비사업 이주·착공, 대규모점포 개설·폐업, 1,000세대 이상 입주 — 최대 5건, 날짜는 달까지). 평가 facts 150건에 한 번 채웠고 사건이 있는 시나리오는 40건(LLM 판정 대상 116건 중 34건). 태그 `events150`, 기준선은 11단계 `news150`.
+
+| 모델 | 핵심 오류 11단계 → 12단계 | 사건 줄 있는 34건 안 |
+|---|---|---|
+| gemini-3.8-flash 일반 | 9 → 3 | 5 → 3 |
+| claude-opus-5-5 | 4 → 2 | 1 → 2 |
+
+- 해석이 사건을 언급한 건 3.8 3건·오퍼스 5건(34건 중)뿐이고, 그중 오류는 없다. 남은 핵심 오류(e013·e028·e033·e114)는 모두 기존 유형(업종 시간대 자료 부족을 일반론으로 메움, 신호 사이 인과 지어냄, 순유출 기준 미달을 개폐업 수로 단정)이다.
+- 3.8 9 → 3은 판정자 변동이 크다(11단계 오류 시나리오와 겹침 거의 없음). 결론은 "늘지 않았다"까지만 — 기본 모델 오류가 늘지 않아 **적용**.
+
+### 13단계 — 판정 근거 약함 표시(v0.87.0, 적용) · 조기 폐업 오독 가드(미적용)
+
+두 가지를 함께 시험했다(태그 `weak150b`, 기준선 12단계 `events150`). ① 안정 신호 없는 7개 업종에 비추천을 내지 않고 판정 줄에 "판정 근거 약함" 문장(평가 facts 74건에 반영, 그중 비추천 12건 → 조건부). ② 해석에서 "조기 폐업"을 새로 연 점포의 생존으로 풀이한 문장을 지우는 가드 — 첫판(`weak150`)은 생존 절벽·조기 폐업을 한 문장에 바르게 푼 문장까지 25개를 지워 "조기 폐업" 앞뒤 구만 보도록 고친 뒤 다시 돌렸다(3.8 5문장·오퍼스 4문장 삭제).
+
+| 모델 | 핵심 오류 12단계 → 13단계 |
+|---|---|
+| gemini-3.8-flash 일반 | 3 → 5 |
+| claude-opus-5-5 | 2 → 4 |
+
+- 3.8의 늘어난 2건: e036은 "판정 근거 약함"을 빼고 위험을 확실하다고 단정(①), e050은 가드가 "저녁 매출이 하루 평균보다 높다"와 오독이 섞인 첫 문장을 통째로 지워 직접 답의 근거가 사라졌다(②). 나머지는 기존 유형(시간대 자료 부족 메움·신호 사이 인과·없는 사실 보탬).
+- 오퍼스 e041은 가드가 못 잡은 조기 폐업 오독이다.
+- 결정: ①은 사용자 제품 결정이라 **적용**. ②는 문장 단위 삭제가 맞는 근거까지 지우고 판정된 오류도 줄지 않아 **미적용**(기록 브랜치 `exp/early-closure-guard`). 조기 폐업 오독은 판정자마다 핵심 오류로 보는 기준이 흔들린다(11·12단계).
+
+### 한계
+
+- 판정자도 Claude(opus)다. 같은 계열 해석을 후하게 볼 수 있어 사람 검수(4차)로 확인한다.
+- Gemini 2.5 오류율이 판정 회차마다 흔들린다(묶음당 2개 해석일 때 9.5%, 3개일 때 16.5%). 모델마다 1회 실행이다.
+- 원자료: `data/eval/results/claude-models-2026-10-06/`(3단계는 `g38-150/`).
+
+</details>
+
+
+## 12. 사람 검수 이력
+
+LLM 판정만으로는 질문에 답했는지와 사실 오류를 충분히 구분하기 어려웠습니다. 사람이 읽은 결과가 직접 답 구조·위험 등급 표기·해석 말투를 바꾸는 근거가 됐습니다.
+
+### 평가셋 정답 검수
+
+| 날짜 | 대상 | 결과 | 반영 |
+|---|---|---|---|
+| 9/24 | RAG 평가셋 1차 | 사람이 10건을 X로 뒤집음 → confirmed 30 | 질문만으로 해당 공고가 우선 정답이어야 O라는 기준으로 통일 |
+| 9/25 | RAG 평가셋 200건 | confirmed 180 / rejected 20 | 정답 검수 종료 |
+| 10/4 | RAG 평가셋 260건 | confirmed 233 / rejected 27 | 질문 22건 교체, 임베딩 평가에 사용 |
+| 10/5 | 의도 관문 평가셋 81건 | confirmed 80 / rejected 1 | 종로1.2.3.4가동 정답 정정, 관문 평가에 사용 |
+
+### 리포트 해석 검수
+
+| 차수 | 날짜 | 대상 | 결과 | 반영 |
+|---|---|---|---|---|
+| 1차 | 10/5 | 20건 × Gemini 2.5·12b | 38칸 중 질문 응답 입력 10칸 모두 못 답함, 판단 어려움 26칸 | 해석 한 단락을 본문과 대조하도록 검수 범위 축소 |
+| 2차 | 10/5 | 같은 20건 × 2모델 | 질문 있는 16건 중 **답함 4건**, Claude 판정은 모두 답함 | 질문 유형별 직접 답·근거를 코드가 작성, 판정 기준표 개정 |
+| 3차 | 10/6 | 질문 있는 16건 × 2모델 | **답함 13/16 (81%)**, 통과선 75% | 못 답함 3건의 백분위 오독을 위험 등급·풀어 쓴 순번으로 수정 |
+| 4차 | 10/6 | 20건 × 3.8 일반·Opus, 블라인드 | **틀린 내용 두 모델 0/20**, 질문 답함 둘 다 11/12. 더 나은 해석: 비슷함 14·3.8 2·Opus 1·미선택 3 | 3.8 일반 선택을 뒷받침, 친절한 말투 규칙 반영 |
+| 5차 | 10/6 | 같은 20건 × 운영 v0.78.0의 두 모델 | 기록한 **2건**에서 틀린 내용 둘 다 0, 더 나은 해석 둘 다 3.8 | 직접 답·근거 상자만 펼치고 본문을 접은 검수 구성 유지 |
+
+5차의 나머지 18건은 총평만 있어 20건 전체의 오류율로 계산하지 않습니다. 4차의 0/20도 작은 표본의 사람 검수 결과이며, 116건 LLM 판정의 오류가 사라졌다는 뜻은 아닙니다. 다음 검수는 분량을 줄여 끝까지 기록하도록 구성할 필요가 있습니다.
+
+원자료는 구현 저장소의 `docs/model-evaluation.md` §11~12와 `data/eval/results/claude-models-2026-10-06/`에 있습니다. 날짜별 구현 기록은 [개발 일지](/docs/devlog.html)에서 확인할 수 있습니다.
