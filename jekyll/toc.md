@@ -55,6 +55,7 @@ nav_order: 2
 - [검증 결과와 구현 근거]({{ '/docs/evidence.html' | relative_url }})
 - [품질 관리 및 테스트]({{ '/docs/guidelines/quality.html' | relative_url }})
 - [모델 평가]({{ '/docs/model-evaluation.html' | relative_url }})
+- [부하 테스트]({{ '/docs/load-test.html' | relative_url }})
 
 ## [10. 최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }})
 

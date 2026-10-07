@@ -1,0 +1,95 @@
+// 부하 테스트: 수치는 텍스트로 제공하고 장식용 트랙만 접근성 트리에서 제외한다.
+.lt-decisions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+.lt-decision {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--mb-line);
+  border-top: 3px solid var(--mb-blue);
+  border-radius: 12px;
+  background: #fff;
+  overflow-wrap: anywhere;
+  h3 { margin: 0 0 12px; font-size: 17px !important; }
+  .lt-number {
+    margin: 20px 0 0;
+    color: var(--mb-ink);
+    font-size: 26px;
+    font-weight: 750;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+  small { display: block; margin-top: 6px; font-size: 12px; font-weight: 400; color: var(--mb-muted); }
+}
+.lt-chart {
+  margin: 24px 0;
+  padding: 24px;
+  border: 1px solid var(--mb-line);
+  border-radius: 12px;
+  background: #fff;
+  figcaption { font-weight: 650; font-size: 15px; color: var(--mb-ink); }
+  .lt-chart-note { margin: 8px 0 22px; font-size: 12px; color: var(--mb-muted); }
+}
+.lt-axis {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 158px 0 194px;
+  font-size: 11px;
+  color: var(--mb-muted);
+  font-variant-numeric: tabular-nums;
+}
+.lt-rounds { list-style: none; padding: 0 !important; margin: 0; }
+.lt-bar-row {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr) 140px;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0;
+  font-size: 12px;
+  > * { min-width: 0; overflow-wrap: anywhere; }
+  &::before { display: none; }
+  &:last-child { margin-bottom: 0; }
+}
+.lt-round-label {
+  strong, small { display: block; }
+  small { margin-top: 4px; color: var(--mb-muted); font-size: 11px; }
+}
+.lt-bar-track { display: block; height: 14px; background: var(--mb-surface); }
+.lt-bar-fill { display: block; height: 100%; background: var(--mb-blue); border-radius: 0 3px 3px 0; }
+.lt-bar-lower-bound {
+  position: relative;
+  border-radius: 0;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: 16px;
+    border-top: 2px dashed var(--mb-blue);
+    transform: translateY(-50%);
+  }
+  &::after {
+    content: "▶";
+    position: absolute;
+    left: calc(100% + 16px);
+    top: 50%;
+    color: var(--mb-blue);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+}
+.lt-bar-value { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 65rem) {
+  .lt-decisions { grid-template-columns: 1fr; }
+}
+@media (max-width: 40rem) {
+  .lt-chart, .lt-decision { padding: 18px; }
+  .lt-axis { margin: 0 152px 8px 0; }
+  .lt-bar-row { grid-template-columns: minmax(0, 1fr) minmax(0, 140px); gap: 10px 12px; margin: 22px 0; }
+  .lt-round-label { grid-column: 1 / -1; }
+}
