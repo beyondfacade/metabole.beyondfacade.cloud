@@ -56,6 +56,6 @@ FastAPI·PostgreSQL·pgvector·Next.js를 사용합니다. 판정과 자금 계�
 - 정확도(top-1·MRR·nDCG@10)와 질의 지연(p50·p95)·VRAM·비용을 함께 기록합니다. 기존 평가셋은 상한에 가까워 어려운 질문 묶음을 따로 집계합니다.
 - 채택 모델과 탈락 사유를 남기며, 평가가 끝나기 전에는 현재 검색 모델을 유지합니다.
 
-평가 결과는 [모델 평가]({{ '/docs/model-evaluation.html' | relative_url }})에 모았습니다. 임베딩(10/4)은 bge-m3@1024를 채택했고, 같은 방식으로 이어 잰 LLM 평가(10/5)에서는 리포트·관문 모두 엄격 게이트를 통과한 로컬 모델이 없어 gemini-2.5-flash를 기본으로 유지합니다.
+평가 결과는 [모델 평가]({{ '/docs/model-evaluation.html' | relative_url }})에 모았습니다. 임베딩(10/4)은 bge-m3@1024를 채택했고, 같은 방식으로 이어 잰 LLM 평가(10/5)에서는 리포트·관문 모두 엄격 게이트를 통과한 로컬 모델이 없었습니다. 리포트 해석은 10/6 외부 API 비교(116건)를 거쳐 gemini-3.8-flash 일반 모드를 1차로, claude-opus-5-5 → gemma4:12b를 폴백으로 쓰고, 의도 관문은 10/7 같은 날 비교(3.8 일반 98.8% 대 2.5-flash 95.0%)를 거쳐 gemini-3.8-flash 일반 모드로 바꿨습니다(v0.88.0).
 
 검증 기준과 기존 측정 기록은 [검증 결과와 원문 근거]({{ '/docs/evidence.html' | relative_url }}), 예외 조건은 [시나리오 테스트]({{ '/docs/deliverables/test-scenario.html' | relative_url }})에서 확인합니다.
