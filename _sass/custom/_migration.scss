@@ -1,0 +1,46 @@
+.sm-timeline {
+  margin: 24px 0;
+}
+
+.sm-event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: 16px;
+  padding: 0 0 24px 22px;
+  border-left: 2px solid var(--mb-line);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0.45rem;
+    left: -6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--mb-blue);
+  }
+
+  &:last-child { padding-bottom: 0; }
+}
+
+.sm-time {
+  margin: 0;
+  color: var(--mb-blue);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.sm-action {
+  min-width: 0;
+  margin: 0;
+  color: var(--mb-ink);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 40rem) {
+  .sm-event {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}

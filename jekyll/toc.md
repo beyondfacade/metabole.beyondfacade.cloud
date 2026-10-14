@@ -60,6 +60,7 @@ nav_order: 2
 ## [10. 최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }})
 
 - [개발 표준 및 산출물]({{ '/docs/guidelines/standards.html' | relative_url }})
+- [서버 이전 계획 및 실행]({{ '/docs/server-migration.html' | relative_url }})
 
 ## [11. 출품시나리오]({{ '/docs/deliverables/demo-scenario.html' | relative_url }})
 

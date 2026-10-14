@@ -44,7 +44,7 @@ has_children: true
 
 ## 개발환경
 
-로컬 개발 환경에서는 Next.js·FastAPI와 PostgreSQL·pgvector를 사용하며 임베딩·LLM의 외부 의존이 있습니다. 문서 사이트는 Jekyll입니다. 실제 서비스 주소는 [beyondfacade.cloud](https://beyondfacade.cloud)이며 최종 운영 설정은 별도 검수 대상입니다.
+로컬 개발 환경에서는 Next.js·FastAPI와 PostgreSQL·pgvector를 사용하며 임베딩·LLM의 외부 의존이 있습니다. 문서 사이트는 Jekyll입니다. 실제 서비스 주소는 [beyondfacade.cloud](https://beyondfacade.cloud)이며, 2026-10-12부터 백엔드는 AWS 서울 리전(EKS·RDS), 프론트는 Vercel에서 운영합니다. 구성과 선택 이유는 [서버 이전 계획 및 실행]({{ '/docs/server-migration.html' | relative_url }})에 있습니다.
 
 ## 주요 기술요소 (SW Stack / Infra Stack)
 
@@ -55,6 +55,7 @@ has_children: true
 | DB·검색 | PostgreSQL, pgvector | 정형 지표와 근거 문서 검색 연결 |
 | 리포트 | LLM 게이트웨이·사실 수집·SSE | 실패 격리와 사실/설명 책임 분리 |
 | 프론트 | Next.js·React·TypeScript·TanStack Query·MapLibre | 조건 전달·지도·비동기 상태 표시 |
+| 운영 인프라 | AWS EKS·RDS PostgreSQL·ALB, Vercel, Terraform·Argo CD | 상태 없는 API는 쿠버네티스, 상태 있는 DB는 관리형 — 자동 확장·무중단 배포·시점 복구 |
 | 검증 | pytest·Vitest·검색 평가·판정 백테스트 | 코드 동작과 통계 검증의 분리 |
 
 ## 요구사항 별 기술요소

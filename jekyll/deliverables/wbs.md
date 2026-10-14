@@ -78,9 +78,9 @@ Jekyll 문서와 Next.js·FastAPI 서비스는 별도 프로젝트입니다. 로
 |---|---|---|
 | 개발 서버 | 로컬 GPU 서버 (Ollama gemma3·qwen3 임베딩 상주) | ✅ 운영 중 |
 | DB | PostgreSQL + pgvector (Docker Compose) | ✅ 운영 중 |
-| 배치 | crontab — 수집 크론 일 1회 + RAG 색인 크론 05:50 | ✅ 운영 중 |
+| 배치 | crontab → 10.12부터 AWS EKS CronJob 9개 | ✅ 운영 중 |
 | 문서 사이트 | GitHub Pages (metabole.beyondfacade.cloud) | ✅ 운영 중 |
-| 운영 이전 | AWS (G 인스턴스 쿼터 신청) — [최종 검수]({{ '/docs/deliverables/final-inspection.html' | relative_url }})의 이전 방안 참조 | 📋 예정 |
+| 운영 이전 | AWS 서울 리전 EKS + RDS, 프론트 Vercel — [서버 이전 계획 및 실행]({{ '/docs/server-migration.html' | relative_url }}) | ✅ 10.12 이전 완료 |
 
 ## Milestone
 
